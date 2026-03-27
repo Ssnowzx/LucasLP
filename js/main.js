@@ -120,21 +120,18 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 })
 
 /* ============================================================
-   FLOATING CTA — Show after hero
+   FLOATING CTA — Robust mobile trigger
    ============================================================ */
 const floatingCta = document.getElementById('floatingCta')
-const heroSection = document.getElementById('hero')
-
-if (floatingCta && heroSection) {
-  const floatObserver = new IntersectionObserver(([entry]) => {
-    if (!entry.isIntersecting) {
+if (floatingCta) {
+  window.addEventListener('scroll', () => {
+    // Show only on mobile/tablet after 300px scroll
+    if (window.innerWidth <= 860 && window.scrollY > 400) {
       floatingCta.classList.add('visible')
     } else {
       floatingCta.classList.remove('visible')
     }
-  }, { threshold: 0 })
-
-  floatObserver.observe(heroSection)
+  }, { passive: true })
 }
 
 /* ============================================================

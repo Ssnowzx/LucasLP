@@ -62,4 +62,14 @@ O padrão para blocos de alta autoridade da página.
 3. **Contraste de Decisão:** CTAs principais sempre em verde sólido; CTAs secundários em fundo escuro com borda neon fina.
 
 ---
-*Última atualização: 27 de Março de 2026*
+
+## 🧭 5. Navegação & Comportamento (Mobile)
+
+Para maximizar o espaço de leitura e focar na mensagem central em telas pequenas, adotamos o seguinte padrão de comportamento:
+
+1. **Navbar Superior (Topo):** No mobile, a barra de navegação **não deve ser fixa**. Ela usa `position: relative` para subir junto com o cabeçalho e sumir da tela conforme o usuário rola a página, eliminando ruídos visuais.
+2. **Floating CTA (Rodapé):** Surge automaticamente após os primeiros **400px de scroll**. Este botão fixo no rodapé torna-se o único ponto de conversão persistente após a saída do Hero.
+3. **Menu Dropdown:** Deve flutuar abaixo do logo com o efeito `menuSlideDown`, sem bloquear o topo da tela.
+
+---
+*Última atualização: 27 de Março de 2026 (Boutique Navigation Sync)*
