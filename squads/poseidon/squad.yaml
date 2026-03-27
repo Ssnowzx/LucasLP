@@ -1,0 +1,70 @@
+# 🔱 Squad Poseidon — Dashboard Vantage Command v2.0
+# Projeto: AntiGravity / LucasLP
+# Missão: Dashboard completo de gestão para sociedade boutique
+
+squad:
+  name: Poseidon
+  icon: 🔱
+  mission: "Construir dashboard Vantage Command v2.0 com gestão financeira, Kanban funcional, pipeline de clientes e métricas de crescimento — tema Ocean"
+  project: LucasLP
+  created: 2026-03-27
+
+members:
+  - agent: architect
+    persona: Aria
+    role: Lead Architect
+    responsibilities:
+      - Arquitetura de módulos do dashboard
+      - Estrutura de dados localStorage → Supabase ready
+      - Padrões de componentes e state management
+
+  - agent: ux-design-expert
+    persona: Uma
+    role: UI/UX Lead
+    responsibilities:
+      - Design System Ocean Theme expandido
+      - Layout responsivo (mobile-first)
+      - Acessibilidade e micro-interações
+      - Hierarquia visual de informações
+
+  - agent: dev
+    persona: Dex
+    role: Full Stack Developer
+    responsibilities:
+      - Implementação HTML/CSS/JS
+      - Kanban drag-and-drop
+      - Charts com Chart.js
+      - State management com localStorage
+      - CRUD completo de todos os módulos
+
+  - agent: analyst
+    persona: Alex
+    role: Business Analyst
+    responsibilities:
+      - Definição de KPIs e métricas de crescimento
+      - Regras de negócio financeiras
+      - Alertas inteligentes
+      - Lógica de projeções
+
+  - agent: qa
+    persona: Quinn
+    role: Quality Assurance
+    responsibilities:
+      - Testes de usabilidade
+      - Validação de cálculos financeiros
+      - Testes de drag-and-drop cross-browser
+      - Verificação de responsividade
+
+constraints:
+  - "Zero APIs externas com assinatura (sem Trello, Notion, etc)"
+  - "Tudo em uma única página (SPA-like)"
+  - "localStorage agora, Supabase depois (estrutura compatível)"
+  - "Tema Ocean obrigatório (Deep Sea Professional)"
+  - "Vanilla JS — sem frameworks"
+  - "Chart.js único CDN permitido"
+
+deliverables:
+  - dashboard.html (página completa)
+  - css/dashboard.css (Ocean Theme v2)
+  - js/dashboard.js (engine completa)
+  - docs/stories/dashboard-v2.story.md (story de referência)

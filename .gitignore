@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.env
+.env.*.local
+.DS_Store
+*.tmp
+*.log
+.aiox/
+.antigravity/
+.claude/
+.codex/
+.cursor/
+.gemini/
+.github/agents/
+.agent/

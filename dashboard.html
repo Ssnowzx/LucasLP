@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vantage Command | Centro de Comando</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+    <div class="dashboard">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo" id="sidebarLogo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                    <span class="logo-text">VANTAGE</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Minimizar/Expandir">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-page="overview" onclick="navigateTo('overview', event)">
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+                    <span class="menu-label">Dashboard</span>
+                </a>
+                <a href="#" class="menu-item" data-page="kanban" onclick="navigateTo('kanban', event)">
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="8" height="20" rx="1"/><rect x="13" y="2" width="8" height="20" rx="1"/></svg></span>
+                    <span class="menu-label">Kanban</span>
+                </a>
+                <a href="#" class="menu-item" data-page="finance" onclick="navigateTo('finance', event)">
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 11h6"/></svg></span>
+                    <span class="menu-label">Financeiro</span>
+                </a>
+                <a href="#" class="menu-item" data-page="pipeline" onclick="navigateTo('pipeline', event)">
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l2 2 4-4"/></svg></span>
+                    <span class="menu-label">Pipeline</span>
+                </a>
+                <a href="#" class="menu-item" data-page="goals" onclick="navigateTo('goals', event)">
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5 4 2 7-7-5-7 5 2-7-5-4h7l3-7z"/></svg></span>
+                    <span class="menu-label">Metas</span>
+                </a>
+                <a href="#" class="menu-item" data-page="notes" onclick="navigateTo('notes', event)">
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+                    <span class="menu-label">Notas</span>
+                </a>
+                <a href="#" class="menu-item" data-page="fbads" onclick="navigateTo('fbads', event)">
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l1-7h16l1 7"/><path d="M12 11v6"/><path d="M8 11v2a4 4 0 0 0 8 0v-2"/><rect x="4" y="17" width="16" height="4" rx="1"/></svg></span>
+                    <span class="menu-label">Facebook Ads</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="user-badge-sidebar" id="userBadgeSidebar" onclick="toggleUser()" title="Trocar usuario">
+                    <span class="user-avatar" id="userAvatarSidebar">L</span>
+                    <span class="user-name" id="userNameSidebar">Lucas</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN AREA -->
+        <main class="main-area">
+            <!-- PAGE HEADER -->
+            <header class="page-header">
+                <div class="page-header-left">
+                    <button class="mobile-menu-toggle" id="mobileToggle" onclick="toggleSidebar()">☰</button>
+                    <div class="page-breadcrumb" id="pageBreadcrumb">Dashboard</div>
+                </div>
+                <div class="page-header-right">
+                    <span class="header-greeting" id="headerGreeting">Bom dia</span>
+                </div>
+            </header>
+
+            <!-- PAGES CONTAINER -->
+            <div class="pages-container">
+
+                <!-- PAGE: OVERVIEW/DASHBOARD -->
+                <div class="page-view active" id="page-overview">
+                    <div class="page-intro">
+                        <div class="intro-box">
+                            <h2>Bem-vindo ao Vantage Command</h2>
+                            <p>Seu centro de comando para gestao de crescimento. Aqui voce acompanha os KPIs mais importantes do seu negocio em tempo real.</p>
+                            <div class="intro-tips">
+                                <div class="tips-header">
+                                    <strong>💡 Dicas</strong>
+                                    <button class="tips-toggle" onclick="toggleTips(this)">−</button>
+                                </div>
+                                <ul>
+                                    <li>Use o menu lateral para navegar entre os setores</li>
+                                    <li>Clique no seu nome no canto inferior esquerdo para trocar entre Lucas e Rodrigo</li>
+                                    <li>Os dados sao salvos automaticamente no seu navegador</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="section-title">Metricas de Crescimento</h2>
+                        <div class="kpi-grid">
+                            <div class="kpi-card">
+                                <div class="kpi-header">
+                                    <span class="kpi-label">MRR</span>
+                                    <span class="kpi-trend" id="trendMRR"></span>
+                                </div>
+                                <div class="kpi-value" id="kpiMRR">R$ 0</div>
+                                <div class="kpi-sub">Receita Recorrente Mensal</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-header">
+                                    <span class="kpi-label">Receita Total</span>
+                                    <span class="kpi-trend" id="trendRevenue"></span>
+                                </div>
+                                <div class="kpi-value accent" id="kpiRevenue">R$ 0</div>
+                                <div class="kpi-sub">Entradas do mes</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-header">
+                                    <span class="kpi-label">Despesas</span>
+                                    <span class="kpi-trend" id="trendExpense"></span>
+                                </div>
+                                <div class="kpi-value danger" id="kpiExpense">R$ 0</div>
+                                <div class="kpi-sub">Saidas do mes</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-header">
+                                    <span class="kpi-label">Lucro Liquido</span>
+                                    <span class="kpi-trend" id="trendProfit"></span>
+                                </div>
+                                <div class="kpi-value success" id="kpiProfit">R$ 0</div>
+                                <div class="kpi-sub">Resultado operacional</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-header"><span class="kpi-label">Margem</span></div>
+                                <div class="kpi-value" id="kpiMargin">0%</div>
+                                <div class="kpi-sub">Lucro / Receita</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-header"><span class="kpi-label">Clientes Ativos</span></div>
+                                <div class="kpi-value accent" id="kpiClients">0 / 5</div>
+                                <div class="kpi-sub">Slots boutique</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-header"><span class="kpi-label">Ticket Medio</span></div>
+                                <div class="kpi-value" id="kpiTicket">R$ 0</div>
+                                <div class="kpi-sub">Valor por cliente</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-header">
+                                    <span class="kpi-label">Crescimento</span>
+                                    <span class="kpi-trend" id="trendGrowth"></span>
+                                </div>
+                                <div class="kpi-value success" id="kpiGrowth">0%</div>
+                                <div class="kpi-sub">MoM (mes a mes)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="section-title">Graficos de Performance</h2>
+                        <div class="charts-grid">
+                            <div class="chart-card">
+                                <h3 class="chart-title">Receita vs Despesa</h3>
+                                <div class="chart-container"><canvas id="chartRevenue"></canvas></div>
+                            </div>
+                            <div class="chart-card">
+                                <h3 class="chart-title">Despesas por Categoria</h3>
+                                <div class="chart-container"><canvas id="chartExpenses"></canvas></div>
+                            </div>
+                            <div class="chart-card">
+                                <h3 class="chart-title">Tarefas Concluidas</h3>
+                                <div class="chart-container"><canvas id="chartTasks"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE: KANBAN -->
+                <div class="page-view" id="page-kanban">
+                    <div class="page-intro">
+                        <div class="intro-box">
+                            <h2>Kanban Board</h2>
+                            <p>Organize e acompanhe todas as tarefas do negocio. Arraste tarefas entre colunas para atualizar seu status.</p>
+                            <div class="intro-tips">
+                                <div class="tips-header">
+                                    <strong>💡 Como usar</strong>
+                                    <button class="tips-toggle" onclick="toggleTips(this)">−</button>
+                                </div>
+                                <ul>
+                                    <li><strong>Arraste</strong> tarefas entre colunas (desktop e mobile)</li>
+                                    <li><strong>Filtre</strong> por responsavel (Lucas/Rodrigo) ou prioridade</li>
+                                    <li><strong>Edite</strong> clicando no lapis em qualquer tarefa</li>
+                                    <li><strong>Prioridades:</strong> Urgente (vermelho) > Alta (laranja) > Normal (azul) > Baixa (cinza)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Estrategia & Implementacao</h2>
+                            <button class="btn-primary" onclick="openTaskModal('backlog')">+ Adicionar Tarefa</button>
+                        </div>
+                        <div class="kanban-filters">
+                            <button class="filter-btn active" data-filter="all" onclick="filterTasks('all')">Todos</button>
+                                <button class="filter-btn" data-filter="lucas" onclick="filterTasks('lucas')">Lucas</button>
+                                <button class="filter-btn" data-filter="rodrigo" onclick="filterTasks('rodrigo')">Rodrigo</button>
+                                <select class="filter-select" id="filterPriority" onchange="filterTasks(document.querySelector('.filter-btn.active').dataset.filter)">
+                                    <option value="all">Todas Prioridades</option>
+                                    <option value="urgent">Urgente</option>
+                                    <option value="high">Alta</option>
+                                    <option value="normal">Normal</option>
+                                    <option value="low">Baixa</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="kanban-board">
+                            <div class="kanban-column" id="col-backlog" ondrop="dropTask(event)" ondragover="allowDrop(event)">
+                                <div class="column-header">
+                                    <div class="column-info">
+                                        <span class="column-dot" style="background:var(--shell-muted)"></span>
+                                        <span class="column-title">Backlog</span>
+                                        <span class="column-count" id="count-backlog">0</span>
+                                    </div>
+                                    <button class="add-task-btn" onclick="openTaskModal('backlog')">+</button>
+                                </div>
+                                <div class="task-list" id="list-backlog"></div>
+                            </div>
+                            <div class="kanban-column" id="col-progress" ondrop="dropTask(event)" ondragover="allowDrop(event)">
+                                <div class="column-header">
+                                    <div class="column-info">
+                                        <span class="column-dot" style="background:var(--sea-foam)"></span>
+                                        <span class="column-title">Em Andamento</span>
+                                        <span class="column-count" id="count-progress">0</span>
+                                    </div>
+                                    <button class="add-task-btn" onclick="openTaskModal('progress')">+</button>
+                                </div>
+                                <div class="task-list" id="list-progress"></div>
+                            </div>
+                            <div class="kanban-column" id="col-review" ondrop="dropTask(event)" ondragover="allowDrop(event)">
+                                <div class="column-header">
+                                    <div class="column-info">
+                                        <span class="column-dot" style="background:var(--sand-gold)"></span>
+                                        <span class="column-title">Em Revisao</span>
+                                        <span class="column-count" id="count-review">0</span>
+                                    </div>
+                                    <button class="add-task-btn" onclick="openTaskModal('review')">+</button>
+                                </div>
+                                <div class="task-list" id="list-review"></div>
+                            </div>
+                            <div class="kanban-column" id="col-done" ondrop="dropTask(event)" ondragover="allowDrop(event)">
+                                <div class="column-header">
+                                    <div class="column-info">
+                                        <span class="column-dot" style="background:var(--lagoon-green)"></span>
+                                        <span class="column-title">Concluido</span>
+                                        <span class="column-count" id="count-done">0</span>
+                                    </div>
+                                    <button class="add-task-btn" onclick="openTaskModal('done')">+</button>
+                                </div>
+                                <div class="task-list" id="list-done"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE: FINANCEIRO -->
+                <div class="page-view" id="page-finance">
+                    <div class="page-intro">
+                        <div class="intro-box">
+                            <h2>Gestao Financeira</h2>
+                            <p>Controle total de entradas e saidas. Categorize suas transacoes para ter visibilidade clara da saude financeira.</p>
+                            <div class="intro-tips">
+                                <div class="tips-header">
+                                    <strong>💡 Dicas</strong>
+                                    <button class="tips-toggle" onclick="toggleTips(this)">−</button>
+                                </div>
+                                <ul>
+                                    <li><strong>Registre tudo:</strong> Cada entrada e saida deixa seu saldo mais preciso</li>
+                                    <li><strong>Categorias:</strong> Use as categorias para analisar onde esta o dinheiro</li>
+                                    <li><strong>Filtros:</strong> Veja apenas o mes ou categoria que interessa</li>
+                                    <li><strong>Projecao:</strong> A projecao considera 15% de crescimento</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Resumo Financeiro</h2>
+                            <button class="btn-primary" onclick="openModal('modalFinance')">+ Adicionar Transacao</button>
+                        </div>
+
+                        <div class="finance-summary">
+                            <div class="fin-summary-card">
+                                <span class="fin-label">Entradas</span>
+                                <span class="fin-value success" id="finIncome">R$ 0</span>
+                            </div>
+                            <div class="fin-summary-card">
+                                <span class="fin-label">Saidas</span>
+                                <span class="fin-value danger" id="finExpense">R$ 0</span>
+                            </div>
+                            <div class="fin-summary-card">
+                                <span class="fin-label">Saldo</span>
+                                <span class="fin-value accent" id="finBalance">R$ 0</span>
+                            </div>
+                            <div class="fin-summary-card">
+                                <span class="fin-label">Projecao</span>
+                                <span class="fin-value" id="finProjection">R$ 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Historico de Transacoes</h2>
+                        </div>
+
+                        <div class="finance-actions">
+                            <select class="filter-select" id="filterFinMonth" onchange="renderFinances()">
+                                <option value="all">Todos os Meses</option>
+                            </select>
+                            <select class="filter-select" id="filterFinType" onchange="renderFinances()">
+                                <option value="all">Todos</option>
+                                <option value="income">Entradas</option>
+                                <option value="expense">Saidas</option>
+                            </select>
+                            <select class="filter-select" id="filterFinCat" onchange="renderFinances()">
+                                <option value="all">Todas Categorias</option>
+                            </select>
+                        </div>
+
+                        <div class="finance-table-wrapper">
+                            <table class="v-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Descricao</th>
+                                        <th>Categoria</th>
+                                        <th>Responsavel</th>
+                                        <th>Valor</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="financeBody"></tbody>
+                            </table>
+                            <div class="empty-state" id="financeEmpty" style="display:none;">
+                                <p>Nenhuma transacao encontrada</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE: PIPELINE -->
+                <div class="page-view" id="page-pipeline">
+                    <div class="page-intro">
+                        <div class="intro-box">
+                            <h2>Pipeline de Clientes</h2>
+                            <p>Acompanhe seus 5 slots boutique e o progresso de cada cliente no funil de vendas.</p>
+                            <div class="intro-tips">
+                                <div class="tips-header">
+                                    <strong>💡 Como usar</strong>
+                                    <button class="tips-toggle" onclick="toggleTips(this)">−</button>
+                                </div>
+                                <ul>
+                                    <li><strong>5 slots:</strong> Voce pode ter no maximo 5 clientes ativos (boutique)</li>
+                                    <li><strong>Estagios:</strong> Mova clientes para direita conforme avancam no funil</li>
+                                    <li><strong>Alerta:</strong> Use este estagio para clientes em risco de sair</li>
+                                    <li><strong>Fee mensal:</strong> O MRR total e calculado com base nisso</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Seus Slots Boutique</h2>
+                            <button class="btn-primary" onclick="openModal('modalClient')">+ Adicionar Cliente</button>
+                        </div>
+                        <div class="pipeline-board" id="pipelineBoard"></div>
+                    </div>
+                </div>
+
+                <!-- PAGE: GOALS -->
+                <div class="page-view" id="page-goals">
+                    <div class="page-intro">
+                        <div class="intro-box">
+                            <h2>Metas & Objetivos</h2>
+                            <p>Defina metas claras para seu negocio e acompanhe o progresso em tempo real.</p>
+                            <div class="intro-tips">
+                                <div class="tips-header">
+                                    <strong>💡 Dicas</strong>
+                                    <button class="tips-toggle" onclick="toggleTips(this)">−</button>
+                                </div>
+                                <ul>
+                                    <li><strong>SMART:</strong> Metas devem ser Especificas, Mensuraveis, Alcancaveis, Relevantes, Temporizadas</li>
+                                    <li><strong>Botoes de incremento:</strong> Use +500, +1k, +5k para atualizar progresso rapido</li>
+                                    <li><strong>Categorias:</strong> Organize por tipo (receita, clientes, ads, etc)</li>
+                                    <li><strong>Visual:</strong> A barra fica verde quando completa a meta!</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Metas do Mes</h2>
+                            <button class="btn-primary" onclick="openModal('modalGoal')">+ Adicionar Meta</button>
+                        </div>
+                        <div class="goals-grid" id="goalsGrid"></div>
+                        <div class="empty-state" id="goalsEmpty">
+                            <p>Nenhuma meta definida. Crie sua primeira meta!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE: NOTES -->
+                <div class="page-view" id="page-notes">
+                    <div class="page-intro">
+                        <div class="intro-box">
+                            <h2>Notas Compartilhadas</h2>
+                            <p>Comunique-se rapidamente com seu socio. Todas as notas ficam salvas no seu dashboard.</p>
+                            <div class="intro-tips">
+                                <div class="tips-header">
+                                    <strong>💡 Dicas</strong>
+                                    <button class="tips-toggle" onclick="toggleTips(this)">−</button>
+                                </div>
+                                <ul>
+                                    <li><strong>Enter:</strong> Pressione Enter para enviar sua nota (Shift+Enter para quebra de linha)</li>
+                                    <li><strong>Privado:</strong> Apenas voces dois veem estas notas (nao sao compartilhadas online)</li>
+                                    <li><strong>Avatar:</strong> L = Lucas, R = Rodrigo — identifica quem escreveu</li>
+                                    <li><strong>Timestamp:</strong> Cada nota registra quando foi criada</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="section-title">Conversa Privada</h2>
+                        <div class="notes-container">
+                            <div class="notes-input">
+                                <textarea id="noteInput" placeholder="Escreva uma nota para seu socio... (Enter para enviar)" rows="2"></textarea>
+                                <button class="btn-primary" onclick="addNote()">Enviar</button>
+                            </div>
+                            <div class="notes-feed" id="notesFeed"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE: FACEBOOK ADS -->
+                <div class="page-view" id="page-fbads">
+                    <div class="page-intro">
+                        <div class="intro-box">
+                            <h2>Facebook Ads</h2>
+                            <p>Gerencie e acompanhe suas campanhas de trafego pago. Conecte sua API ou registre dados manualmente.</p>
+                            <div class="intro-tips">
+                                <div class="tips-header">
+                                    <strong>💡 Dicas</strong>
+                                    <button class="tips-toggle" onclick="toggleTips(this)">−</button>
+                                </div>
+                                <ul>
+                                    <li><strong>API Key:</strong> Insira seu token do Facebook Marketing API para sincronizar dados automaticamente</li>
+                                    <li><strong>Manual:</strong> Voce pode adicionar campanhas manualmente enquanto nao conecta a API</li>
+                                    <li><strong>ROAS:</strong> Retorno sobre investimento em ads — acima de 3x e saudavel</li>
+                                    <li><strong>Seguranca:</strong> A chave da API fica salva localmente no seu navegador. Use Supabase para mais seguranca</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Configuracao da API</h2>
+                        </div>
+                        <div class="fbads-config-card">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Access Token (API Key)</label>
+                                    <div class="api-key-field">
+                                        <input type="password" id="fbApiKey" placeholder="Cole seu token aqui...">
+                                        <button type="button" class="api-key-toggle" onclick="toggleApiKeyVisibility()">👁</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Ad Account ID</label>
+                                    <input type="text" id="fbAccountId" placeholder="act_XXXXXXXXX">
+                                </div>
+                            </div>
+                            <div class="fbads-config-actions">
+                                <button class="btn-primary" onclick="saveFbConfig()">Salvar Configuracao</button>
+                                <button class="btn-secondary" onclick="testFbConnection()">Testar Conexao</button>
+                                <span class="fbads-config-status" id="fbConfigStatus"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Performance Geral</h2>
+                        </div>
+                        <div class="fbads-summary">
+                            <div class="fbads-summary-card">
+                                <span class="fin-label">Total Gasto</span>
+                                <span class="fin-value danger" id="fbTotalSpent">R$ 0</span>
+                            </div>
+                            <div class="fbads-summary-card">
+                                <span class="fin-label">Impressoes</span>
+                                <span class="fin-value" id="fbTotalImpressions">0</span>
+                            </div>
+                            <div class="fbads-summary-card">
+                                <span class="fin-label">Cliques</span>
+                                <span class="fin-value accent" id="fbTotalClicks">0</span>
+                            </div>
+                            <div class="fbads-summary-card">
+                                <span class="fin-label">Conversoes</span>
+                                <span class="fin-value success" id="fbTotalConversions">0</span>
+                            </div>
+                            <div class="fbads-summary-card">
+                                <span class="fin-label">CTR Medio</span>
+                                <span class="fin-value" id="fbAvgCTR">0%</span>
+                            </div>
+                            <div class="fbads-summary-card">
+                                <span class="fin-label">CPC Medio</span>
+                                <span class="fin-value" id="fbAvgCPC">R$ 0</span>
+                            </div>
+                            <div class="fbads-summary-card">
+                                <span class="fin-label">CPM Medio</span>
+                                <span class="fin-value" id="fbAvgCPM">R$ 0</span>
+                            </div>
+                            <div class="fbads-summary-card">
+                                <span class="fin-label">ROAS Medio</span>
+                                <span class="fin-value success" id="fbAvgROAS">0x</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Campanhas</h2>
+                            <button class="btn-primary" onclick="openFbCampaignModal()">+ Adicionar Campanha</button>
+                        </div>
+                        <div class="fbads-filters">
+                            <select class="filter-select" id="filterFbStatus" onchange="renderFbCampaigns()">
+                                <option value="all">Todos Status</option>
+                                <option value="active">Ativa</option>
+                                <option value="paused">Pausada</option>
+                                <option value="completed">Concluida</option>
+                                <option value="draft">Rascunho</option>
+                            </select>
+                            <select class="filter-select" id="filterFbObjective" onchange="renderFbCampaigns()">
+                                <option value="all">Todos Objetivos</option>
+                                <option value="conversions">Conversoes</option>
+                                <option value="traffic">Trafego</option>
+                                <option value="leads">Leads</option>
+                                <option value="awareness">Reconhecimento</option>
+                                <option value="engagement">Engajamento</option>
+                            </select>
+                        </div>
+                        <div class="finance-table-wrapper">
+                            <table class="v-table">
+                                <thead>
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Campanha</th>
+                                        <th>Objetivo</th>
+                                        <th>Orcamento</th>
+                                        <th>Gasto</th>
+                                        <th>Impressoes</th>
+                                        <th>Cliques</th>
+                                        <th>CTR</th>
+                                        <th>CPC</th>
+                                        <th>ROAS</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fbCampaignsBody"></tbody>
+                            </table>
+                            <div class="empty-state" id="fbCampaignsEmpty">
+                                <p>Nenhuma campanha registrada. Adicione sua primeira campanha!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="section-title">Graficos de Ads</h2>
+                        <div class="charts-grid charts-grid--2">
+                            <div class="chart-card">
+                                <h3 class="chart-title">Gasto vs Conversoes</h3>
+                                <div class="chart-container"><canvas id="chartFbSpend"></canvas></div>
+                            </div>
+                            <div class="chart-card">
+                                <h3 class="chart-title">ROAS por Campanha</h3>
+                                <div class="chart-container"><canvas id="chartFbROAS"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+    <!-- Modal: Tarefa -->
+    <div class="modal" id="modalTask">
+        <div class="modal-overlay" onclick="closeModal('modalTask')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nova Tarefa</h3>
+                <button class="modal-close" onclick="closeModal('modalTask')">&times;</button>
+            </div>
+            <form id="formTask" onsubmit="handleTaskSubmit(event)">
+                <input type="hidden" id="taskColumn">
+                <input type="hidden" id="taskEditId">
+                <div class="form-group">
+                    <label>Titulo *</label>
+                    <input type="text" id="taskTitle" required placeholder="Ex: Configurar campanha Facebook Ads">
+                </div>
+                <div class="form-group">
+                    <label>Descricao</label>
+                    <textarea id="taskDesc" rows="3" placeholder="Detalhes da tarefa..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Responsavel</label>
+                        <select id="taskOwner">
+                            <option value="lucas">Lucas</option>
+                            <option value="rodrigo">Rodrigo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Prioridade</label>
+                        <select id="taskPriority">
+                            <option value="normal">Normal</option>
+                            <option value="low">Baixa</option>
+                            <option value="high">Alta</option>
+                            <option value="urgent">Urgente</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Prazo</label>
+                        <input type="date" id="taskDue">
+                    </div>
+                    <div class="form-group">
+                        <label>Label</label>
+                        <input type="text" id="taskLabel" placeholder="Ex: Marketing, Dev, Ads">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('modalTask')">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar Tarefa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Transacao -->
+    <div class="modal" id="modalFinance">
+        <div class="modal-overlay" onclick="closeModal('modalFinance')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nova Transacao</h3>
+                <button class="modal-close" onclick="closeModal('modalFinance')">&times;</button>
+            </div>
+            <form id="formFinance" onsubmit="handleFinanceSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tipo *</label>
+                        <select id="finType">
+                            <option value="income">Entrada (Receita)</option>
+                            <option value="expense">Saida (Despesa)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Data *</label>
+                        <input type="date" id="finDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descricao *</label>
+                    <input type="text" id="finDesc" required placeholder="Ex: Mensalidade Cliente X">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Categoria *</label>
+                        <select id="finCat">
+                            <option value="Mensalidade">Mensalidade Cliente</option>
+                            <option value="Performance">Bonus Performance</option>
+                            <option value="Ads">Ads / Trafego Pago</option>
+                            <option value="Ferramentas">Ferramentas / Software</option>
+                            <option value="Operacional">Operacional</option>
+                            <option value="Impostos">Impostos</option>
+                            <option value="Pro-labore">Pro-labore</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Valor (R$) *</label>
+                        <input type="number" id="finValue" step="0.01" min="0.01" required placeholder="0,00">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Responsavel</label>
+                    <select id="finOwner">
+                        <option value="lucas">Lucas</option>
+                        <option value="rodrigo">Rodrigo</option>
+                        <option value="empresa">Empresa</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('modalFinance')">Cancelar</button>
+                    <button type="submit" class="btn-primary">Registrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Cliente -->
+    <div class="modal" id="modalClient">
+        <div class="modal-overlay" onclick="closeModal('modalClient')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Novo Cliente</h3>
+                <button class="modal-close" onclick="closeModal('modalClient')">&times;</button>
+            </div>
+            <form id="formClient" onsubmit="handleClientSubmit(event)">
+                <div class="form-group">
+                    <label>Nome do Cliente *</label>
+                    <input type="text" id="clientName" required placeholder="Ex: Empresa ABC">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Fee Mensal (R$) *</label>
+                        <input type="number" id="clientFee" step="0.01" min="0" required placeholder="0,00">
+                    </div>
+                    <div class="form-group">
+                        <label>% Performance</label>
+                        <input type="number" id="clientPerf" step="0.1" min="0" max="100" placeholder="10">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Estagio</label>
+                    <select id="clientStage">
+                        <option value="lead">Lead</option>
+                        <option value="proposal">Proposta</option>
+                        <option value="onboarding">Onboarding</option>
+                        <option value="active">Ativo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Observacoes</label>
+                    <textarea id="clientNotes" rows="2" placeholder="Detalhes sobre o cliente..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('modalClient')">Cancelar</button>
+                    <button type="submit" class="btn-primary">Adicionar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Meta -->
+    <div class="modal" id="modalGoal">
+        <div class="modal-overlay" onclick="closeModal('modalGoal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nova Meta</h3>
+                <button class="modal-close" onclick="closeModal('modalGoal')">&times;</button>
+            </div>
+            <form id="formGoal" onsubmit="handleGoalSubmit(event)">
+                <div class="form-group">
+                    <label>Titulo da Meta *</label>
+                    <input type="text" id="goalTitle" required placeholder="Ex: Atingir R$ 30k MRR">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="goalCategory">
+                            <option value="receita">Receita</option>
+                            <option value="clientes">Clientes</option>
+                            <option value="tarefas">Tarefas</option>
+                            <option value="ads">Ads/Marketing</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Valor Alvo</label>
+                        <input type="number" id="goalTarget" step="0.01" min="1" required placeholder="30000">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Progresso Atual</label>
+                    <input type="number" id="goalCurrent" step="0.01" min="0" value="0" placeholder="0">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('modalGoal')">Cancelar</button>
+                    <button type="submit" class="btn-primary">Criar Meta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Facebook Ads Campaign -->
+    <div class="modal" id="modalFbCampaign">
+        <div class="modal-overlay" onclick="closeModal('modalFbCampaign')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Campanha Facebook Ads</h3>
+                <button class="modal-close" onclick="closeModal('modalFbCampaign')">&times;</button>
+            </div>
+            <form id="formFbCampaign" onsubmit="handleFbCampaignSubmit(event)">
+                <input type="hidden" id="fbCampaignEditId" value="">
+                <div class="form-group">
+                    <label>Nome da Campanha</label>
+                    <input type="text" id="fbCampName" required placeholder="Ex: Campanha Conversao Black Friday">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="fbCampStatus">
+                            <option value="active">Ativa</option>
+                            <option value="paused">Pausada</option>
+                            <option value="completed">Concluida</option>
+                            <option value="draft">Rascunho</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Objetivo</label>
+                        <select id="fbCampObjective">
+                            <option value="conversions">Conversoes</option>
+                            <option value="traffic">Trafego</option>
+                            <option value="leads">Leads</option>
+                            <option value="awareness">Reconhecimento</option>
+                            <option value="engagement">Engajamento</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Orcamento Diario (R$)</label>
+                        <input type="number" id="fbCampBudget" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Total Gasto (R$)</label>
+                        <input type="number" id="fbCampSpent" step="0.01" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Impressoes</label>
+                        <input type="number" id="fbCampImpressions" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Cliques</label>
+                        <input type="number" id="fbCampClicks" placeholder="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Conversoes</label>
+                        <input type="number" id="fbCampConversions" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>ROAS</label>
+                        <input type="number" id="fbCampROAS" step="0.01" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Data Inicio</label>
+                        <input type="date" id="fbCampStart">
+                    </div>
+                    <div class="form-group">
+                        <label>Data Fim</label>
+                        <input type="date" id="fbCampEnd">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Responsavel</label>
+                        <select id="fbCampOwner">
+                            <option value="lucas">Lucas</option>
+                            <option value="rodrigo">Rodrigo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ID Facebook (opcional)</label>
+                        <input type="text" id="fbCampFbId" placeholder="ID da campanha no Facebook">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Observacoes</label>
+                    <textarea id="fbCampNotes" rows="2" placeholder="Notas sobre a campanha..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('modalFbCampaign')">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar Campanha</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Confirmacao -->
+    <div class="modal" id="modalConfirm">
+        <div class="modal-overlay" onclick="closeModal('modalConfirm')"></div>
+        <div class="modal-content modal-content--sm">
+            <div class="modal-header">
+                <h3>Confirmar Exclusao</h3>
+                <button class="modal-close" onclick="closeModal('modalConfirm')">&times;</button>
+            </div>
+            <p class="confirm-text" id="confirmText">Tem certeza que deseja excluir este item?</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeModal('modalConfirm')">Cancelar</button>
+                <button class="btn-danger" id="confirmBtn" onclick="confirmDelete()">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
