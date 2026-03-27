@@ -1,75 +1,65 @@
 # 🎨 Design System — Operação Boutique (Lucas Veloso)
 
-Este documento define os padrões visuais e técnicos para manter a integridade, o profissionalismo e a alta conversão da landing page.
+Este documento define os padrões visuais e técnicos para manter a integridade, o profissionalismo e a alta conversão da landing page "Lucas Veloso — Estratégia de Marketplaces".
 
 ---
 
 ## 💎 1. Identidade Visual (Color Palette)
 
-A paleta foi escolhida para transmitir **autoridade, exclusividade e crescimento**.
+A paleta foi escolhida para transmitir **autoridade, exclusividade e precisão tecnológica**.
 
 ### 🖤 Backgrounds (Premium Dark)
-- **Primary BG:** `#0A0A0F` (Profundidade e elegância)
-- **Surface:** `#111118` (Cards e elementos de primeira camada)
-- **Surface 2:** `#1A1A24` (Hover e elementos secundários)
-- **Light BG:** `#F5F5F7` (Seções de contraste/leitura limpa)
+- **Primary BG:** `#050508` (Preto absoluto para contraste máximo)
+- **Surface (Cards):** `#0A0A0F` (Base dos cartões master e seções)
+- **Light BG:** `#FFFFFF` (Seções de leitura/cases, foco em clareza)
 
 ### 🟢 Acentos de Conversão (Neon Green)
-*Representa crescimento, dinheiro e o sinal de "GO".*
-- **Primary:** `#B2FE02` (Main CTA, Headlines de destaque)
-- **Accent:** `#3AFF5F` (Gradientes e sucesso)
-- **Glow:** `rgba(178, 254, 2, 0.12)` (Brilho e bordas suaves)
-
-### ⚪ Tipografia & Texto
-- **High Contrast:** `#FFFFFF` (Headlines em fundo escuro)
-- **Dark Text:** `#0A0A0F` (Headlines em fundo claro)
-- **Muted:** `#6B6B80` (Descrições e textos secundários)
+*Representa crescimento, lucro e precisão sênior.*
+- **Primary:** `#B2FE02` (Main CTA, Headlines e Tags)
+- **Glow Beam:** `linear-gradient(90deg, transparent, #B2FE02, transparent)` (Feixe de luz superior)
+- **Success:** `#059669` (Resultados vitoriosos em fundo claro)
 
 ---
 
-## 🖋️ 2. Tipografia
+## 🖋️ 2. Tipografia Fluida (Responsive Scale)
 
-- **Display (Headlines):** `Space Grotesk` (Moderno, tecnológico, autoritário)
-- **Body:** `DM Sans` (Limpo, alta legibilidade, amigável)
+Utilizamos a técnica de `clamp()` para garantir que os títulos se ajustem automaticamente entre Desktop e Mobile sem quebras.
 
----
-
-## 🔳 3. Componentes & Padrões
-
-### ✨ Linha de Brilho Premium (Glow Line)
-O padrão para divisores de seção e rodapé deve usar o gradiente centralizado que transmite modernidade.
-
-**CSS Standard:**
-```css
-.glow-line {
-    height: 1px;
-    width: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(178, 254, 2, 0.2) 20%, rgba(178, 254, 2, 0.5) 50%, rgba(178, 254, 2, 0.2) 80%, transparent 100%);
-    border: none;
-    margin: 0;
-}
-```
-
-### 🔘 Botões CTA
-- **Primary:** Gradiente Neon + Sombra de Projeção (Glow).
-- **Behavior:** Hover com elevação sutil e aumento de brilho.
-- **Radius:** `Full` (Padrão Apple/Moderno).
+- **Headlines (H1/H2):** `Space Grotesk` (Semibold/Bold)
+  - *H1 Scale:* `clamp(2.4rem, 5vw, 4rem)`
+  - *H2 Scale:* `clamp(1.8rem, 4vw, 2.8rem)`
+- **Body:** `DM Sans` (Limpo e profissional)
+  - *Regular:* `1rem`
+  - *Small/Muted:* `0.85rem`
 
 ---
 
-## 🚀 4. Espaçamento & Grid
+## 🔳 3. Componentes Master (Signature Patterns)
 
-- **Seção Padding:** `100px 0` (Desktop), `64px 0` (Mobile).
-- **Border Radius:** `12px` (Padrão), `20px` (Cards Grandes).
-- **Container Max-Width:** `1200px`.
+### 🛰️ Boutique Master Card (Command Center)
+O padrão para blocos de alta autoridade da página.
+- **Background:** `#0A0A0F` com borda sutil `rgba(178,254,2,0.22)`.
+- **Top Beam Effect:** Um pseudo-elemento `::before` com altura de `3px` e gradiente neon no topo.
+- **Shadow:** `inset 0 4px 12px rgba(178,254,2,0.08)` para criar profundidade de luz.
+- **Width:** Máximo de `1000px` para evitar vazios visuais.
+
+### 📼 Marquee Strip (Dark Variant)
+- **Background:** `#000` (Preto absoluto).
+- **Text:** White (`#FFFFFF`), bold (`700`), uppercase.
+- **Punctuation:** Pontos neon (`#B2FE02`) com sombra de brilho (`box-shadow`).
+
+### 🏷️ Section Tags (Centralized)
+- **Style:** Caixa alta, fonte `Space Grotesk` negrito, fundo transparente com borda neon.
+- **Animation:** `tagFloat` (flutuação infinita suave) para indicar vitalidade.
+- **Position:** Sempre centralizada no topo da seção, fora do cartão principal.
 
 ---
 
-## 🚀 5. Psicologia da Conversão (CRO)
+## 🚀 4. Psicologia da Conversão (CRO)
 
-1. **Urgência:** Sempre em tons escuros premium com ponto pulsante verde. Evitar vermelho "alerta" para não parecer spam.
-2. **Hierarquia:** O verde Neon é reservado estritamente para o que faz o usuário **avançar** (CTAs e métricas de lucro).
-3. **Autoridade:** Uso de `Space Grotesk` em caixa alta para tags de seção aumenta a percepção de método estruturado.
+1. **Escassez Real:** O contador de vagas (8/10) deve ser em formato circular (SVG) com animação de progresso.
+2. **Autoridade Split:** Layouts de cartões master devem ser divididos (Split) entre Texto Persuasivo (Esquerda) e Prova/Ação (Direita).
+3. **Contraste de Decisão:** CTAs principais sempre em verde sólido; CTAs secundários em fundo escuro com borda neon fina.
 
 ---
-*Atualizado em: 2026-03-27*
+*Última atualização: 27 de Março de 2026*

@@ -60,7 +60,7 @@ Sua tela inicial com visão de 360° do negócio. Concentra os KPIs mais crític
 | **Despesas** | Total gasto no mês | Acompanhar burn rate |
 | **Lucro Líquido** | Receita - Despesas | Indicador de saúde financeira |
 | **Margem (%)** | (Lucro / Receita) × 100 | Meta: 50%+ é saudável |
-| **Clientes Ativos** | Slots boutique ocupados | De 0 a 5 |
+| **Clientes Ativos** | Slots boutique ocupados | De 0 a 10 |
 | **Ticket Médio** | MRR / Clientes Ativos | Valor médio por cliente |
 | **Crescimento MoM** | Variação mês anterior | % de crescimento mensal |
 
@@ -74,7 +74,7 @@ Sua tela inicial com visão de 360° do negócio. Concentra os KPIs mais crític
 Se você tem 3 clientes com fees de R$5.000, R$3.000 e R$2.000:
 - MRR = R$10.000
 - Ticket Médio = R$3.333
-- Clientes Ativos = 3/5
+- Clientes Ativos = 3/10
 ```
 
 #### 2️⃣ Gráficos de Performance (3 Gráficos)
@@ -256,7 +256,7 @@ Margem (%)      = (Saldo / Entradas) × 100
 ### 🎯 PIPELINE (Gestão de Clientes)
 
 **O que é?**
-Sua **visão visual dos 5 slots boutique** do negócio. Acompanhe clientes do contato até o sucesso.
+Sua **visão visual dos 10 slots boutique** do negócio. Acompanhe clientes do contato até o sucesso.
 
 #### 6 Estágios
 
@@ -318,12 +318,12 @@ ALERTA (se performance <50% esperado)
 #### KPI: Ocupação
 
 ```
-Clientes Ativos / 5 Slots × 100 = Ocupação %
+Clientes Ativos / 10 Slots × 100 = Ocupação %
 
 Exemplo:
 - Você tem 3 clientes ativos
-- 3 / 5 × 100 = 60% de ocupação
-- Ainda há 2 slots disponíveis
+- 3 / 10 × 100 = 30% de ocupação
+- Ainda há 7 slots disponíveis
 ```
 
 #### Dicas do Pipeline
@@ -633,8 +633,8 @@ R: Sim, registre uma por uma com datas diferentes (ex: Proposta de R$10k = 5 par
 
 ### Pipeline
 
-**P: Posso ter mais de 5 clientes?**
-R: O modelo é boutique com máximo 5 slots. Se quer expandir, essa é uma decisão estratégica. Por enquanto, a interface não suporta >5.
+**P: Posso ter mais de 10 clientes?**
+R: O modelo é boutique com máximo 10 slots. Se quer expandir além disso, essa é uma decisão que pode afetar a qualidade hands-on. Por enquanto, a interface e a promessa de marca focam em 10 slots.
 
 **P: Como sair um cliente?**
 R: Mude para estágio "ALERTA" e faça anotação. Se quiser realmente deletar, há opção no card (confirmação pedida).
@@ -773,5 +773,5 @@ Sprint 3 (Junho 2026):
 ---
 
 **Mantido por:** Squad Poseidon
-**Última revisão:** 27 de Março de 2026
-**Versão:** 2.1 (Sidebar + 7 Páginas + Facebook Ads Support)
+**Última revisão:** 27 de Março de 2026 às 17:50
+**Versão:** 2.2 (Sidebar + 7 Páginas + Facebook Ads + Boutique Sync 10 Slots)
