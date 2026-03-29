@@ -19,7 +19,7 @@
                     <svg class="logo-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                     </svg>
-                    <span class="logo-text">VANTAGE</span>
+                    <span class="logo-text">VANTAGE COMMAND</span>
                 </div>
                 <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Minimizar/Expandir">
                     <span></span><span></span><span></span>
@@ -74,6 +74,11 @@
                     <div class="page-breadcrumb" id="pageBreadcrumb">Dashboard</div>
                 </div>
                 <div class="page-header-right">
+                    <div class="page-actions">
+                        <button class="btn-primary btn-sm" onclick="openTaskModal('backlog')" title="Nova Tarefa">+ Tarefa</button>
+                        <button class="btn-primary btn-sm" onclick="openModal('modalFinance')" title="Nova Transação">+ Transação</button>
+                        <button class="btn-primary btn-sm" onclick="openModal('modalClient')" title="Novo Cliente">+ Cliente</button>
+                    </div>
                     <span class="header-greeting" id="headerGreeting">Bom dia</span>
                 </div>
             </header>
@@ -83,7 +88,8 @@
 
                 <!-- PAGE: OVERVIEW/DASHBOARD -->
                 <div class="page-view active" id="page-overview">
-                    <div class="page-intro">
+
+                    <div class="page-intro" id="overview-intro">
                         <div class="intro-box">
                             <h2>Bem-vindo ao Vantage Command</h2>
                             <p>Seu centro de comando para gestão de crescimento. Aqui você acompanha os KPIs mais importantes do seu negócio em tempo real.</p>
@@ -101,10 +107,54 @@
                         </div>
                     </div>
 
-                    <div class="section">
-                        <h2 class="section-title">Métricas de Crescimento</h2>
+                    <div class="section" id="overview-insights">
+                        <h2 class="section-title">Insights Estratégicos</h2>
+                        <div class="insights-grid" id="insightsGrid">
+                            <div class="insight-card" id="insightStuckMoney" style="display:none;">
+                                <div class="insight-icon">⚠️</div>
+                                <div class="insight-body">
+                                    <div class="insight-title">Dinheiro Travado</div>
+                                    <div class="insight-text">O gasto com Ads cresceu mais de 15% enquanto a receita cresceu menos de 5%. Revise a eficiência das campanhas.</div>
+                                </div>
+                            </div>
+                            <div class="insight-card success">
+                                <div class="insight-icon">🎯</div>
+                                <div class="insight-body">
+                                    <div class="insight-title">Saúde da Boutique</div>
+                                    <div class="insight-text" id="insightBoutiqueStatus">Você tem 0 de 5 slots ocupados. Foco em exclusividade.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section" id="overview-metrics">
+                        <h2 class="section-title">Funil & Operação</h2>
                         <div class="kpi-grid">
-                            <div class="kpi-card">
+                            <div class="kpi-card" title="Tempo total desde a abertura da carteira estratégica">
+                                <div class="kpi-header"><span class="kpi-label">Tempo de Operação</span></div>
+                                <div class="kpi-value" id="kpiOpTime">0 dias</div>
+                                <div class="kpi-sub" id="kpiOpStartDate">Início: --/--/----</div>
+                            </div>
+                            <div class="kpi-card" title="Total de pessoas/empresas que entraram em contato (Leads totais)">
+                                <div class="kpi-header"><span class="kpi-label">Total de Contatos</span></div>
+                                <div class="kpi-value accent" id="kpiTotalContacts">0</div>
+                                <div class="kpi-sub">Leads na base</div>
+                            </div>
+                            <div class="kpi-card" title="Clientes que fecharam e estão ativos na base">
+                                <div class="kpi-header"><span class="kpi-label">Fechamentos</span></div>
+                                <div class="kpi-value success" id="kpiTotalClosed">0</div>
+                                <div class="kpi-sub">Clientes ativos</div>
+                            </div>
+                            <div class="kpi-card" title="Taxa de conversão: (Fechamentos / Contatos) × 100">
+                                <div class="kpi-header"><span class="kpi-label">Taxa de Conversão</span></div>
+                                <div class="kpi-value" id="kpiConversionRate">0%</div>
+                                <div class="kpi-sub">Eficiência de vendas</div>
+                            </div>
+                        </div>
+
+                        <h2 class="section-title" style="margin-top: 2rem;">Métricas de Crescimento</h2>
+                        <div class="kpi-grid">
+                            <div class="kpi-card" title="Receita Recorrente Mensal (Soma dos fees de clientes ativos)">
                                 <div class="kpi-header">
                                     <span class="kpi-label">MRR</span>
                                     <span class="kpi-trend" id="trendMRR"></span>
@@ -112,7 +162,7 @@
                                 <div class="kpi-value" id="kpiMRR">R$ 0</div>
                                 <div class="kpi-sub">Receita Recorrente Mensal</div>
                             </div>
-                            <div class="kpi-card">
+                            <div class="kpi-card" title="Soma de todas as entradas do mês corrente">
                                 <div class="kpi-header">
                                     <span class="kpi-label">Receita Total</span>
                                     <span class="kpi-trend" id="trendRevenue"></span>
@@ -120,7 +170,7 @@
                                 <div class="kpi-value accent" id="kpiRevenue">R$ 0</div>
                                 <div class="kpi-sub">Entradas do mês</div>
                             </div>
-                            <div class="kpi-card">
+                            <div class="kpi-card" title="Soma de todas as saídas (custos/despesas) do mês corrente">
                                 <div class="kpi-header">
                                     <span class="kpi-label">Despesas</span>
                                     <span class="kpi-trend" id="trendExpense"></span>
@@ -128,7 +178,7 @@
                                 <div class="kpi-value danger" id="kpiExpense">R$ 0</div>
                                 <div class="kpi-sub">Saídas do mês</div>
                             </div>
-                            <div class="kpi-card">
+                            <div class="kpi-card" title="Resultado final do mês (Receita Total - Despesas)">
                                 <div class="kpi-header">
                                     <span class="kpi-label">Lucro Líquido</span>
                                     <span class="kpi-trend" id="trendProfit"></span>
@@ -136,22 +186,17 @@
                                 <div class="kpi-value success" id="kpiProfit">R$ 0</div>
                                 <div class="kpi-sub">Resultado operacional</div>
                             </div>
-                            <div class="kpi-card">
+                            <div class="kpi-card" title="Saúde do lucro em relação ao faturamento: (Lucro / Receita) × 100">
                                 <div class="kpi-header"><span class="kpi-label">Margem</span></div>
                                 <div class="kpi-value" id="kpiMargin">0%</div>
                                 <div class="kpi-sub">Lucro / Receita</div>
                             </div>
-                            <div class="kpi-card">
-                                <div class="kpi-header"><span class="kpi-label">Clientes Ativos</span></div>
-                                <div class="kpi-value accent" id="kpiClients">0 / 5</div>
-                                <div class="kpi-sub">Slots boutique</div>
-                            </div>
-                            <div class="kpi-card">
+                            <div class="kpi-card" title="Valor médio cobrado por cliente (MRR / Clientes Ativos)">
                                 <div class="kpi-header"><span class="kpi-label">Ticket Médio</span></div>
                                 <div class="kpi-value" id="kpiTicket">R$ 0</div>
                                 <div class="kpi-sub">Valor por cliente</div>
                             </div>
-                            <div class="kpi-card">
+                            <div class="kpi-card" title="Variação da receita em relação ao mês anterior (MoM)">
                                 <div class="kpi-header">
                                     <span class="kpi-label">Crescimento</span>
                                     <span class="kpi-trend" id="trendGrowth"></span>
@@ -162,7 +207,7 @@
                         </div>
                     </div>
 
-                    <div class="section">
+                    <div class="section" id="overview-charts">
                         <h2 class="section-title">Gráficos de Performance</h2>
                         <div class="charts-grid">
                             <div class="chart-card">

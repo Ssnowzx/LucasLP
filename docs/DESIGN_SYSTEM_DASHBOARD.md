@@ -81,6 +81,7 @@ Heading 3: 0.9rem, 600, Space Grotesk
 Body: 0.85rem, 400, DM Sans
 Label: 0.75rem, 600, DM Sans (uppercase)
 Caption: 0.7rem, 600, DM Sans
+Logo Text: 0.9rem, 700, Space Grotesk
 ```
 
 ### Borders & Radius
@@ -115,14 +116,14 @@ Caption: 0.7rem, 600, DM Sans
 ### Botões
 
 #### Primário
-- **Uso:** Ações principais (criar, salvar, enviar)
+- **Uso:** Ações principais (criar, salvar, enviar). No Header, utiliza-se a variante `.btn-sm`.
 - **Cor:** Sea-foam (#7DD3FC)
 - **Hover:** Sea-foam-dim (#4BA3D4)
-- **Padding:** 0.55rem 1.1rem
+- **Padding:** 0.55rem 1.1rem (Sm: 0.25rem 0.5rem)
 - **Border-radius:** 6px
 
 ```html
-<button class="btn-primary">+ Adicionar</button>
+<button class="btn-primary btn-sm">+ Tarefa</button>
 ```
 
 #### Secundário
@@ -147,6 +148,10 @@ Caption: 0.7rem, 600, DM Sans
 
 ### Cards
 
+#### Funil & Operação Card (v2.1)
+- **Uso:** Métricas de eficiência de funil e tempo de operação.
+- **Componentes:** Mesmo padrão KPI, mas focados em contagem (`kpiTotalContacts`, `kpiTotalClosed`) e tempo (`kpiOpTime`).
+
 #### KPI Card
 - **Uso:** Métricas de crescimento
 - **Componentes:**
@@ -164,7 +169,7 @@ Caption: 0.7rem, 600, DM Sans
   - Meta-tags (owner, priority, label, due-date)
   - Ações (edit, delete) - aparecem ao hover
 - **Priority Border:** Left 3px colored
-- **Drag State:** opacity 0.5
+- **Drag State:** opacity 0.5 (Native + Touch supported)
 
 #### Client Card
 - **Uso:** Pipeline de clientes
@@ -173,6 +178,7 @@ Caption: 0.7rem, 600, DM Sans
   - Fee mensal
   - % Performance
   - Botões de ação (next, prev, delete)
+- **Drag State:** opacity 0.5 (Native + Touch supported)
 
 ### Inputs & Forms
 
@@ -240,7 +246,7 @@ Caption: 0.7rem, 600, DM Sans
 #### Expanded
 - **Width:** 240px
 - **Menuitems:** Flex com gap 0.25rem
-- **Logo:** Visível
+- **Logo:** `VANTAGE COMMAND` com ícone de prisma oceânico.
 - **Labels:** Visível
 
 #### Minimized

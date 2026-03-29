@@ -22,7 +22,11 @@ function loadState() {
     clients: JSON.parse(localStorage.getItem(STORAGE.clients)) || [],
     goals: JSON.parse(localStorage.getItem(STORAGE.goals)) || [],
     notes: JSON.parse(localStorage.getItem(STORAGE.notes)) || [],
-    settings: JSON.parse(localStorage.getItem(STORAGE.settings)) || { currentUser: 'lucas', sidebarMinimized: false },
+    settings: JSON.parse(localStorage.getItem(STORAGE.settings)) || { 
+      currentUser: 'lucas', 
+      sidebarMinimized: false,
+      portfolioStartDate: '2026-03-01' 
+    },
     fbadsConfig: JSON.parse(localStorage.getItem(STORAGE.fbadsConfig)) || { accessToken: '', adAccountId: '', connected: false },
     fbadsCampaigns: JSON.parse(localStorage.getItem(STORAGE.fbadsCampaigns)) || []
   };
@@ -160,7 +164,8 @@ function updateGreeting() {
   var greet = 'Boa noite';
   if (hour >= 5 && hour < 12) greet = 'Bom dia';
   else if (hour >= 12 && hour < 18) greet = 'Boa tarde';
-  document.getElementById('headerGreeting').textContent = greet;
+  var name = state.settings.currentUser === 'lucas' ? 'Lucas' : 'Rodrigo';
+  document.getElementById('headerGreeting').textContent = greet + ', ' + name;
 }
 
 // ============================================================
@@ -213,36 +218,103 @@ function updateKPIs() {
   var mrr = activeClients.reduce((s, c) => s + (c.fee || 0), 0);
   var ticket = activeClients.length > 0 ? mrr / activeClients.length : 0;
 
+  // Funil & Operação Metrics
+  var totalContacts = state.clients.length;
+  var closedClients = activeClients.length;
+  var conversionRate = totalContacts > 0 ? (closedClients / totalContacts) * 100 : 0;
+  
+  var startDate = new Date(state.settings.portfolioStartDate || '2026-03-01');
+  var timeDiff = Math.abs(now - startDate);
+  var diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+  document.getElementById('kpiOpTime').textContent = diffDays + (diffDays === 1 ? ' dia' : ' dias');
+  document.getElementById('kpiOpStartDate').textContent = 'Início: ' + formatDate(state.settings.portfolioStartDate || '2026-03-01');
+  document.getElementById('kpiTotalContacts').textContent = totalContacts;
+  document.getElementById('kpiTotalClosed').textContent = closedClients;
+  document.getElementById('kpiConversionRate').textContent = conversionRate.toFixed(1) + '%';
+
   var prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
   var prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-  var prevIncome = state.finances.filter(f => {
+  var prevMonthFinances = state.finances.filter(f => {
     var d = new Date(f.date);
-    return d.getMonth() === prevMonth && d.getFullYear() === prevYear && f.type === 'income';
-  }).reduce((s, f) => s + f.val, 0);
+    return d.getMonth() === prevMonth && d.getFullYear() === prevYear;
+  });
+
+  var prevIncome = prevMonthFinances.filter(f => f.type === 'income').reduce((s, f) => s + f.val, 0);
+  var prevExpense = prevMonthFinances.filter(f => f.type === 'expense').reduce((s, f) => s + f.val, 0);
+  var prevProfit = prevIncome - prevExpense;
   var growth = prevIncome > 0 ? (((income - prevIncome) / prevIncome) * 100) : 0;
+
+  var activeClientsPrev = state.clients.filter(c => c.stage === 'active'); // Simplification
+  var mrrPrev = 0; // Needs historical data if available
 
   document.getElementById('kpiMRR').textContent = money(mrr);
   document.getElementById('kpiRevenue').textContent = money(income);
   document.getElementById('kpiExpense').textContent = money(expense);
   document.getElementById('kpiProfit').textContent = money(profit);
   document.getElementById('kpiMargin').textContent = margin.toFixed(1) + '%';
-  document.getElementById('kpiClients').textContent = activeClients.length + ' / 5';
   document.getElementById('kpiTicket').textContent = money(ticket);
   document.getElementById('kpiGrowth').textContent = (growth >= 0 ? '+' : '') + growth.toFixed(1) + '%';
 
+  // Insights Logic
+  updateInsights(income, prevIncome, expense, prevExpense);
+
   setTrend('trendMRR', mrr, 0);
   setTrend('trendRevenue', income, prevIncome);
-  setTrend('trendExpense', expense, 0);
-  setTrend('trendProfit', profit, 0);
+  setTrend('trendExpense', expense, prevExpense, true); // inverted=true for expenses
+  setTrend('trendProfit', profit, prevProfit);
   setTrend('trendGrowth', growth, 0);
 }
 
-function setTrend(id, current, previous) {
+function updateInsights(income, prevIncome, expense, prevExpense) {
+  var stuckCard = document.getElementById('insightStuckMoney');
+  if (!stuckCard) return;
+
+  // Rule: ads_spend grows > 15% while revenue grows < 5%
+  // Here we use total expense as proxy for ads_spend if not categorized separately
+  var adsExpense = state.finances.filter(f => f.type === 'expense' && f.cat === 'Ads').reduce((s, f) => s + f.val, 0);
+  var prevAdsExpense = state.finances.filter(f => {
+    var d = new Date(f.date);
+    var now = new Date();
+    var pm = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+    var py = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+    return d.getMonth() === pm && d.getFullYear() === py && f.type === 'expense' && f.cat === 'Ads';
+  }).reduce((s, f) => s + f.val, 0);
+
+  var adsGrowth = prevAdsExpense > 0 ? ((adsExpense - prevAdsExpense) / prevAdsExpense) * 100 : 0;
+  var revGrowth = prevIncome > 0 ? ((income - prevIncome) / prevIncome) * 100 : 0;
+
+  if (adsGrowth > 15 && revGrowth < 5) {
+    stuckCard.style.display = 'flex';
+  } else {
+    stuckCard.style.display = 'none';
+  }
+
+  // Boutique Health
+  var activeCount = state.clients.filter(c => c.stage === 'active').length;
+  var statusText = 'Você tem ' + activeCount + ' de 5 slots ocupados.';
+  if (activeCount === 5) statusText += ' **Boutique Lotada!** 🚀';
+  else statusText += ' Foco em exclusividade.';
+  document.getElementById('insightBoutiqueStatus').textContent = statusText;
+}
+
+function setTrend(id, current, previous, inverted) {
   var el = document.getElementById(id);
   if (!el) return;
-  if (current > previous) { el.textContent = '↑'; el.className = 'kpi-trend up'; }
-  else if (current < previous) { el.textContent = '↓'; el.className = 'kpi-trend down'; }
-  else { el.textContent = '→'; el.className = 'kpi-trend neutral'; }
+  
+  var isBetter = inverted ? current < previous : current > previous;
+  var isWorse = inverted ? current > previous : current < previous;
+
+  if (isBetter) { 
+    el.textContent = '↑'; 
+    el.className = 'kpi-trend up'; 
+  } else if (isWorse) { 
+    el.textContent = '↓'; 
+    el.className = 'kpi-trend down'; 
+  } else { 
+    el.textContent = '→'; 
+    el.className = 'kpi-trend neutral'; 
+  }
 }
 
 // ============================================================
@@ -405,13 +477,27 @@ function renderTasks() {
 function setupTouchDrag() {
   var dragEl = null;
   var dragId = null;
+  var dragType = null; // 'task' or 'client'
 
   document.addEventListener('touchstart', function(e) {
-    var card = e.target.closest('.task-card');
-    if (!card) return;
-    dragEl = card;
-    dragId = card.id;
-    card.classList.add('dragging');
+    var taskCard = e.target.closest('.task-card');
+    var clientCard = e.target.closest('.client-card');
+    
+    if (taskCard) {
+      dragEl = taskCard;
+      dragId = taskCard.id;
+      dragType = 'task';
+    } else if (clientCard) {
+      dragEl = clientCard;
+      // For clients, we need to find the ID. Assuming it's in the state since it's rendered by ID.
+      // But cards don't have id=client.id in the current renderPipeline. Let's fix that.
+      dragId = clientCard.getAttribute('data-id');
+      dragType = 'client';
+    } else {
+      return;
+    }
+    
+    dragEl.classList.add('dragging');
   }, { passive: true });
 
   document.addEventListener('touchend', function(e) {
@@ -419,16 +505,32 @@ function setupTouchDrag() {
     dragEl.classList.remove('dragging');
     var touch = e.changedTouches[0];
     var target = document.elementFromPoint(touch.clientX, touch.clientY);
-    var col = target ? target.closest('.kanban-column') : null;
-    if (col && dragId) {
-      var newCol = col.id.replace('col-', '');
-      state.tasks = state.tasks.map(t => t.id === dragId ? Object.assign({}, t, { col: newCol, updatedAt: isoDate() }) : t);
-      saveAll();
-      renderTasks();
-      updateCharts();
+    
+    if (dragType === 'task') {
+      var col = target ? target.closest('.kanban-column') : null;
+      if (col && dragId) {
+        var newCol = col.id.replace('col-', '');
+        state.tasks = state.tasks.map(t => t.id === dragId ? Object.assign({}, t, { col: newCol, updatedAt: isoDate() }) : t);
+        saveAll();
+        renderTasks();
+        updateCharts();
+      }
+    } else if (dragType === 'client') {
+      var stageCol = target ? target.closest('.stage-slots') : null;
+      if (stageCol && dragId) {
+        var newStage = stageCol.id.replace('stage-', '');
+        if (newStage !== 'empty') {
+          state.clients = state.clients.map(c => c.id === dragId ? Object.assign({}, c, { stage: newStage, updatedAt: isoDate() }) : c);
+          saveAll();
+          renderPipeline();
+          updateKPIs();
+        }
+      }
     }
+    
     dragEl = null;
     dragId = null;
+    dragType = null;
   }, { passive: true });
 }
 
@@ -584,6 +686,23 @@ window.moveClientStage = function(id, direction) {
   updateKPIs();
 };
 
+window.allowDropClient = function(ev) {
+  ev.preventDefault();
+  ev.currentTarget.classList.add('drag-over');
+};
+
+window.dropClient = function(ev) {
+  ev.preventDefault();
+  ev.currentTarget.classList.remove('drag-over');
+  var clientId = ev.dataTransfer.getData('clientId');
+  var newStage = ev.currentTarget.id.replace('stage-', '');
+  if (newStage === 'empty') return; // Cannot drop into empty column
+  state.clients = state.clients.map(c => c.id === clientId ? Object.assign({}, c, { stage: newStage, updatedAt: isoDate() }) : c);
+  saveAll();
+  renderPipeline();
+  updateKPIs();
+};
+
 function renderPipeline() {
   var pipelineBoard = document.getElementById('pipelineBoard');
   if (!pipelineBoard) return;
@@ -609,6 +728,9 @@ function renderPipeline() {
     var slotsDiv = document.createElement('div');
     slotsDiv.className = 'stage-slots';
     slotsDiv.id = 'stage-' + stage;
+    slotsDiv.ondrop = function(ev) { dropClient(ev); };
+    slotsDiv.ondragover = function(ev) { allowDropClient(ev); };
+    slotsDiv.ondragleave = function() { slotsDiv.classList.remove('drag-over'); };
 
     if (stage === 'empty') {
       var usedSlots = state.clients.length;
@@ -624,6 +746,13 @@ function renderPipeline() {
       clients.forEach(client => {
         var card = document.createElement('div');
         card.className = 'client-card';
+        card.setAttribute('data-id', client.id);
+        card.draggable = true;
+        card.ondragstart = function(ev) {
+          ev.dataTransfer.setData('clientId', client.id);
+          card.classList.add('dragging');
+        };
+        card.ondragend = function() { card.classList.remove('dragging'); };
         card.innerHTML =
           '<div class="client-card__name">' + sanitize(client.name) + '</div>' +
           '<div class="client-card__fee">' + money(client.fee) + '/mes</div>' +

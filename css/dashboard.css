@@ -35,8 +35,8 @@
   --ocean-shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.6);
   --radius-sm: 6px;
   --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 18px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
   --transition: 0.2s ease;
 
   --sidebar-width: 240px;
@@ -307,7 +307,7 @@ body {
 /* === KANBAN === */
 .kanban-filters { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
 .filter-btn {
-  padding: 0.3rem 0.7rem; border-radius: var(--radius-sm);
+  padding: 0.3rem 0.7rem; border-radius: 99px;
   font-size: 0.75rem; font-weight: 600;
   background: var(--ocean-surface); color: var(--shell-muted);
   border: 1px solid var(--ocean-border); cursor: pointer;
@@ -316,7 +316,7 @@ body {
 .filter-btn:hover { color: var(--sand-mist); }
 .filter-btn.active { background: var(--sea-foam-glow); color: var(--sea-foam); border-color: var(--sea-foam); }
 .filter-select {
-  padding: 0.3rem 0.5rem; border-radius: var(--radius-sm);
+  padding: 0.3rem 0.5rem; border-radius: 99px;
   font-size: 0.75rem; background: var(--ocean-surface);
   color: var(--shell-muted); border: 1px solid var(--ocean-border);
   cursor: pointer;
@@ -358,7 +358,7 @@ body {
 .task-card {
   background: var(--ocean-surface);
   border: 1px solid var(--ocean-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: 0.85rem;
   cursor: grab; transition: all var(--transition);
   position: relative;
@@ -440,7 +440,7 @@ body {
 .v-table .val-expense { font-weight: 700; color: var(--starfish-coral); }
 .status-tag {
   display: inline-block; padding: 0.15rem 0.5rem;
-  border-radius: 4px; font-size: 0.65rem; font-weight: 600;
+  border-radius: 99px; font-size: 0.65rem; font-weight: 600;
 }
 .status--income { background: rgba(45, 212, 191, 0.1); color: var(--lagoon-green); }
 .status--expense { background: rgba(252, 165, 165, 0.1); color: var(--starfish-coral); }
@@ -471,15 +471,18 @@ body {
   border-bottom: 1px solid var(--ocean-border);
 }
 .stage-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.stage-slots { display: flex; flex-direction: column; gap: 0.5rem; }
+.stage-slots { display: flex; flex-direction: column; gap: 0.5rem; transition: background var(--transition); border-radius: var(--radius-md); }
+.stage-slots.drag-over { background: var(--ocean-surface-hover); }
 
 .client-card {
   background: var(--ocean-surface);
   border: 1px solid var(--ocean-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: 0.75rem;
-  cursor: pointer; transition: all var(--transition);
+  cursor: grab; transition: all var(--transition);
 }
+.client-card:active { cursor: grabbing; }
+.client-card.dragging { opacity: 0.5; }
 .client-card:hover { border-color: var(--ocean-border-light); }
 .client-card__name { font-weight: 600; font-size: 0.8rem; color: var(--pearl-white); }
 .client-card__fee { font-size: 0.7rem; color: var(--sea-foam); margin-top: 0.2rem; }
@@ -564,6 +567,20 @@ body {
 .note-item__body { flex: 1; }
 .note-item__meta { font-size: 0.7rem; color: var(--deep-muted); margin-bottom: 0.25rem; }
 .note-item__text { font-size: 0.85rem; color: var(--sand-mist); line-height: 1.4; }
+
+/* === INSIGHTS === */
+.insights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem; }
+.insight-card {
+  display: flex; gap: 1rem; align-items: center;
+  padding: 1rem; border-radius: var(--radius-lg);
+  background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.2);
+}
+.insight-card.success {
+  background: rgba(45, 212, 191, 0.1); border: 1px solid rgba(45, 212, 191, 0.2);
+}
+.insight-icon { font-size: 1.5rem; }
+.insight-title { font-weight: 700; font-size: 0.9rem; color: var(--pearl-white); margin-bottom: 0.1rem; }
+.insight-text { font-size: 0.8rem; color: var(--shell-muted); line-height: 1.4; }
 
 /* === BUTTONS === */
 .btn-primary {
@@ -668,7 +685,7 @@ body {
 .api-key-field input {
   flex: 1; width: 100%; background: var(--ocean-bg);
   border: 1px solid var(--ocean-border); color: var(--sand-mist);
-  padding: 0.65rem 2.5rem 0.65rem 0.85rem; border-radius: var(--radius-md);
+  padding: 0.65rem 2.5rem 0.65rem 0.85rem; border-radius: var(--radius-lg);
   font-size: 0.85rem; font-family: 'DM Sans', sans-serif;
   transition: border-color var(--transition);
 }
@@ -691,7 +708,7 @@ body {
   display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;
 }
 .campaign-status {
-  display: inline-block; padding: 0.15rem 0.5rem; border-radius: var(--radius-sm);
+  display: inline-block; padding: 0.15rem 0.5rem; border-radius: 99px;
   font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
 }
 .campaign-status--active { background: rgba(45,212,191,0.15); color: var(--lagoon-green); }

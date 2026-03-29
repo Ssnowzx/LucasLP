@@ -49,9 +49,18 @@ Um painel administrativo nativo focado em **Crescimento Acelerado** e **Transpar
 - **Warning:** `#FCA5A5` (Starfish - Coral Pastel)
 
 ## ⚖️ 5. Regras de Negócio (Lógica @analyst)
-1. **Onde o dinheiro está travado:** Alerta se `ads_spend` cresce > 15% enquanto `revenue` cresce < 5%.
-2. **Saúde da Boutique:** Indicador visual de slots ocupados (0/5).
+1. **Dinheiro Travado (Insight):** Alerta se `ads_spend` cresce > 15% enquanto `revenue` cresce < 5%. (Implementado via proxy de despesas categorizadas como "Ads").
+2. **Saúde da Boutique:** Indicador visual de slots ocupados (x/5). Foco em manter exclusividade e alto ticket.
 3. **Divisão de Sociedade:** Cálculo automático de lucro líquido pós-custos operacionais.
+4. **Funil & Operação:**
+   - **Tempo de Operação:** Dias decorridos desde `portfolioStartDate` (Padrão: 01/03/2026).
+   - **Taxa de Conversão:** Proporção entre clientes no estágio `active` e o total de contatos na base.
+
+## 📈 6. KPIs Estratégicos (Engine v2.0)
+- **MRR:** Soma de `monthly_fee` de clientes ativos.
+- **Ticket Médio:** `MRR / Clientes Ativos`.
+- **Growth MoM:** Variação percentual da receita em relação ao mês anterior.
+- **Revenue/Expense Trends:** Comparativo visual de entradas vs saídas.
 
 ---
-*Gerado por Orion (Master Orchestrator) — Squad Poseidon*
+*Atualizado em: 29 de Março de 2026 — Squad Poseidon*

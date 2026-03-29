@@ -1,9 +1,9 @@
 # 🔱 Story: Dashboard Vantage Command v2.0
 
 **Squad:** Poseidon
-**Status:** Draft
+**Status:** Ready for Review
 **Prioridade:** Alta
-**Data:** 2026-03-27
+**Data:** 2026-03-29
 
 ---
 
@@ -19,10 +19,10 @@ Dashboard completo de gestão para a sociedade boutique entre Lucas Veloso e Rod
 
 ### M1 — Header & Navegação
 - [x] Logo "VANTAGE COMMAND" com ícone oceânico
-- [ ] Saudação dinâmica (Bom dia/tarde/noite + nome)
-- [ ] Tabs de navegação rápida (âncoras para seções)
-- [ ] Botões de ação rápida: + Transação, + Tarefa, + Cliente
-- [ ] Indicador de quem está logado (Lucas / Sócio)
+- [x] Saudação dinâmica (Bom dia/tarde/noite + nome)
+- [x] Tabs de navegação rápida (âncoras para seções)
+- [x] Botões de ação rápida: + Transação, + Tarefa, + Cliente
+- [x] Indicador de quem está logado (Lucas / Sócio)
 
 ### M2 — KPI Cards (Métricas de Crescimento)
 Cards estratégicos para decisão rápida:
@@ -38,15 +38,21 @@ Cards estratégicos para decisão rápida:
 | Ticket Médio | Valor médio por cliente | MRR / Clientes Ativos |
 | Crescimento MoM | Variação mês a mês | ((MRR atual - anterior) / anterior) × 100 |
 
-- [ ] 8 cards em grid responsivo (4 cols desktop, 2 cols tablet, 1 col mobile)
-- [ ] Indicadores de tendência (↑ verde, ↓ vermelho, → neutro)
-- [ ] Tooltips explicativos em cada card
+- [x] 8 cards em grid responsivo (4 cols desktop, 2 cols tablet, 1 col mobile)
+- [x] Indicadores de tendência (↑ verde, ↓ vermelho, → neutro)
+- [x] Tooltips explicativos em cada card
+
+### M2.1 — Funil & Operação
+- [x] **Tempo de Operação**: Contador de dias desde o início da carteira (01/03/2026)
+- [x] **Total de Contatos**: Leads totais cadastrados na base
+- [x] **Fechamentos**: Contagem de clientes em estágio "Ativo"
+- [x] **Taxa de Conversão**: Eficiência do funil (Fechamentos / Contatos)
 
 ### M3 — Gráficos de Performance
-- [ ] **Revenue Trend** (Line Chart): Receita vs Despesa últimos 6 meses
-- [ ] **Breakdown de Despesas** (Donut Chart): Categorias de gastos
-- [ ] **Performance Semanal** (Bar Chart): Tarefas concluídas por semana
-- [ ] Todos com tema Ocean (cores: sea-foam, lagoon-green, starfish-coral)
+- [x] **Revenue Trend** (Line Chart): Receita vs Despesa últimos 6 meses
+- [x] **Breakdown de Despesas** (Donut Chart): Categorias de gastos
+- [x] **Performance Semanal** (Bar Chart): Tarefas concluídas por semana
+- [x] Todos com tema Ocean (cores: sea-foam, lagoon-green, starfish-coral)
 
 ### M4 — Kanban Board (Funcional Completo)
 Substitui Trello/Notion com funcionalidade nativa:
@@ -67,13 +73,13 @@ Substitui Trello/Notion com funcionalidade nativa:
 - Botão de deletar
 
 **Funcionalidades:**
-- [ ] Drag & drop entre colunas
-- [ ] Filtro por responsável (toggle Lucas/Sócio/Todos)
-- [ ] Filtro por prioridade
-- [ ] Contador de tasks por coluna
-- [ ] Modal de criação/edição completo
-- [ ] Confirmação ao deletar
-- [ ] Ordenação por prioridade dentro da coluna
+- [x] Drag & drop entre colunas
+- [x] Filtro por responsável (toggle Lucas/Sócio/Todos)
+- [x] Filtro por prioridade
+- [x] Contador de tasks por coluna
+- [x] Modal de criação/edição completo
+- [x] Confirmação ao deletar
+- [x] Ordenação por prioridade dentro da coluna
 
 ### M5 — Gestão Financeira
 Controle total de entrada/saída:
@@ -98,11 +104,11 @@ Controle total de entrada/saída:
 - Saldo atual
 - Projeção próximo mês
 
-- [ ] CRUD completo de transações
-- [ ] Filtros e busca
-- [ ] Cálculos automáticos de saldo
-- [ ] Categorização obrigatória
-- [ ] Identificação de responsável (Lucas/Sócio)
+- [x] CRUD completo de transações
+- [x] Filtros e busca
+- [x] Cálculos automáticos de saldo
+- [x] Categorização obrigatória
+- [x] Identificação de responsável (Lucas/Sócio)
 
 ### M6 — Pipeline de Clientes
 Gestão visual dos 5 slots boutique:
@@ -123,27 +129,27 @@ Gestão visual dos 5 slots boutique:
 - Data de início
 - Observações
 
-- [ ] 5 slots visuais estilo pipeline
-- [ ] Drag & drop entre estágios
-- [ ] Modal de CRUD de clientes
-- [ ] Indicador visual de saúde (verde/amarelo/vermelho)
+- [x] 5 slots visuais estilo pipeline
+- [x] Drag & drop entre estágios
+- [x] Modal de CRUD de clientes
+- [x] Indicador visual de saúde (verde/amarelo/vermelho)
 
 ### M7 — Metas & OKRs
 Acompanhamento de objetivos do negócio:
 
-- [ ] Metas mensais com barra de progresso
-- [ ] Input de meta (valor alvo) e progresso atual
-- [ ] Categorias: Receita, Clientes, Tarefas, Ads
-- [ ] Visual de % atingido com cores graduais
+- [x] Metas mensais com barra de progresso
+- [x] Input de meta (valor alvo) e progresso atual
+- [x] Categorias: Receita, Clientes, Tarefas, Ads
+- [x] Visual de % atingido com cores graduais
 
 ### M8 — Notas Rápidas (Lucas & Rodrigo)
 Comunicação interna sem ferramentas externas:
 
-- [ ] Área de notas compartilhadas
-- [ ] Timestamp em cada nota
-- [ ] Identificação de quem escreveu (Lucas/Sócio)
-- [ ] Últimas 20 notas visíveis
-- [ ] Input para nova nota
+- [x] Área de notas compartilhadas
+- [x] Timestamp em cada nota
+- [x] Identificação de quem escreveu (Lucas/Sócio)
+- [x] Últimas 20 notas visíveis
+- [x] Input para nova nota
 
 ---
 
@@ -224,11 +230,30 @@ const STORAGE_KEYS = {
 
 | Arquivo | Status | Descrição |
 |---------|--------|-----------|
-| `dashboard.html` | 🔄 Rewrite | HTML completo com todos os módulos |
-| `css/dashboard.css` | 🔄 Rewrite | Ocean Theme v2 + responsivo |
-| `js/dashboard.js` | 🔄 Rewrite | Engine completa com state management |
+| `dashboard.html` | ✅ Rewrite | HTML completo com todos os módulos |
+| `css/dashboard.css` | ✅ Rewrite | Ocean Theme v2 + responsivo |
+| `js/dashboard.js` | ✅ Rewrite | Engine completa com state management |
 | `squads/poseidon/squad.yaml` | ✅ Criado | Definição da squad |
-| `docs/stories/dashboard-v2.story.md` | ✅ Criado | Este documento |
+| `docs/stories/dashboard-v2.story.md` | 🔄 Update | Este documento |
+
+---
+## 🛠️ Dev Agent Record
+
+### Debug Log
+- [2026-03-29] Implementação de Insights Estratégicos (Money Stuck rule).
+- [2026-03-29] Adição da página de Bastidores com assets de mídia.
+- [2026-03-29] Ajuste de tooltips nos KPI cards e saudação dinâmica.
+
+### Completion Notes
+- Dashboard migrado para layout de Sidebar.
+- Sistema de temas Ocean v2 consolidado em CSS.
+- Módulos de Finanças, Kanban, Pipeline, Metas e Notas 100% funcionais localmente.
+
+### Change Log
+- Criada página de `Bastidores`.
+- Adicionada seção de `Insights` no Overview.
+- Adicionadas abas de navegação rápida no Overview.
+- Corrigida lógica de tendência de despesas.
 
 ---
 *Squad Poseidon — Orion orchestrating 🎯*
