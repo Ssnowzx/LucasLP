@@ -36,7 +36,7 @@ window.logout = function() {
 //  DATA LAYER — Maps between JS state shape and DB columns
 // ============================================================
 
-const db = {
+var db = {
   // --- TASKS ---
   async loadTasks() {
     const { data, error } = await supabase.from('tasks').select('*').order('created_at', { ascending: true });
