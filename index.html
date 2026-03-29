@@ -66,31 +66,52 @@
     </div>
   </nav>
 
+  <!-- ========== SCROLL PROGRESS BAR ========== -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
   <!-- ========== HERO ========== -->
   <section class="hero" id="hero">
-    <img src="/hero.png" class="hero__profile anim-up el-2" alt="Lucas Veloso - Gestor">
+    <img src="/hero.png" class="hero__profile anim-up el-2" alt="Lucas Veloso - Gestor de Marketplaces">
     <div class="container hero__inner">
-      <div class="hero__badge anim-up el-1">
+      <!-- Proof Bar — Credibilidade nos primeiros 2 segundos -->
+      <div class="hero__proof-bar anim-up el-1">
+        <div class="hero__proof-item">
+          <span class="hero__proof-number">30+</span>
+          <span class="hero__proof-label">clientes atendidos</span>
+        </div>
+        <div class="hero__proof-divider"></div>
+        <div class="hero__proof-item">
+          <span class="hero__proof-number">R$ 2M+</span>
+          <span class="hero__proof-label">em vendas gerenciadas</span>
+        </div>
+        <div class="hero__proof-divider"></div>
+        <div class="hero__proof-item">
+          <span class="hero__proof-number">7+</span>
+          <span class="hero__proof-label">segmentos diferentes</span>
+        </div>
+      </div>
+
+      <div class="hero__badge anim-up el-2">
         <span class="pulse-dot"></span>
         Apenas <strong>10 vagas</strong> por ciclo &mdash; <span id="vagasCounter">8</span> já preenchidas
       </div>
-      <h1 class="hero__title anim-up el-2">
-        Seu marketplace fatura menos do que deveria.<br>
-        <span class="gradient-text">Eu sei exatamente onde está o dinheiro travado.</span>
+      <h1 class="hero__title anim-up el-3">
+        <span class="hero__title-line">Seu marketplace fatura menos do que deveria.</span>
+        <span class="gradient-text hero__title-line">Eu sei exatamente onde está o dinheiro travado.</span>
       </h1>
-      <p class="hero__sub anim-up el-3">
+      <p class="hero__sub anim-up el-4">
         Gestão estratégica dos principais marketplaces do Brasil.
         Operação Boutique com no máximo 10 contas &mdash; para quem quer resultado, não relatório.
+        <strong class="hero__time-proof">Primeiros resultados em 30 dias.</strong>
       </p>
-      <div class="hero__ctas anim-up el-4">
+      <div class="hero__ctas anim-up el-5">
         <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
-          <a href="#cta-final" class="btn btn--primary btn--lg cta-track" data-event="InitiateCheckout" style="width:100%;">
+          <a href="#cta-final" class="btn btn--primary btn--xl cta-track" data-event="InitiateCheckout" style="width:100%;">
             Solicitar Diagnóstico Gratuito
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
           <span style="font-size:0.85rem; font-weight:600; color:var(--c-text-muted);">🔒 Sessão de 30 minutos. Zero compromisso.</span>
         </div>
-        <a href="#metodo" class="btn btn--ghost btn--lg" style="height: fit-content;">Ver o método</a>
       </div>
 
     </div>
@@ -185,6 +206,56 @@
   <div class="glow-line"></div>
 
 
+  <!-- ========== COMO FUNCIONA — 3 Passos (StoryBrand Plan) ========== -->
+  <section class="steps section--dark" id="como-funciona">
+    <div class="container">
+      <div class="section-header anim-up">
+        <span class="section-tag">COMO FUNCIONA</span>
+        <h2 class="section-title">Três passos para <span class="gradient-text">destravar seu faturamento</span></h2>
+        <p class="section-desc">Sem burocracia. Sem enrolação. Um processo direto para transformar sua operação.</p>
+      </div>
+      <div class="steps__grid">
+        <div class="step-card anim-up el-1">
+          <div class="step-card__number">01</div>
+          <div class="step-card__icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          </div>
+          <h3 class="step-card__title">Diagnóstico Gratuito</h3>
+          <p class="step-card__desc">Sessão de 30 min onde analiso sua operação e mostro exatamente onde está o dinheiro travado.</p>
+          <span class="step-card__time">30 minutos</span>
+        </div>
+        <div class="step-card__connector anim-up">
+          <svg width="40" height="24" viewBox="0 0 40 24" fill="none" stroke="var(--c-primary)" stroke-width="2"><path d="M0 12h32M26 6l6 6-6 6"/></svg>
+        </div>
+        <div class="step-card anim-up el-2">
+          <div class="step-card__number">02</div>
+          <div class="step-card__icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <h3 class="step-card__title">Plano Estratégico</h3>
+          <p class="step-card__desc">Receba um plano personalizado com as ações prioritárias para escalar sua operação em 7 dias.</p>
+          <span class="step-card__time">7 dias</span>
+        </div>
+        <div class="step-card__connector anim-up">
+          <svg width="40" height="24" viewBox="0 0 40 24" fill="none" stroke="var(--c-primary)" stroke-width="2"><path d="M0 12h32M26 6l6 6-6 6"/></svg>
+        </div>
+        <div class="step-card anim-up el-3">
+          <div class="step-card__number">03</div>
+          <div class="step-card__icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <h3 class="step-card__title">Execução e Escala</h3>
+          <p class="step-card__desc">Eu opero. Você escala. Resultados visíveis em 30 dias sem você perder tempo com operacional.</p>
+          <span class="step-card__time">30 dias</span>
+        </div>
+      </div>
+      <div class="section-cta anim-up">
+        <a href="#cta-final" class="btn btn--primary btn--lg cta-track" data-event="ViewContent">Começar pelo diagnóstico gratuito</a>
+      </div>
+    </div>
+  </section>
+  <div class="glow-line"></div>
+
   <!-- ========== METODO V.E.C. (DARK) ========== -->
   <section class="method section--dark" id="metodo">
     <div class="container">
@@ -224,7 +295,7 @@
           <h4 class="method-step-card__title">Diagnóstico +<br>Estancamento</h4>
           <p class="method-step-card__desc">Auditoria completa da operação. Identifico onde está <span class="bg-highlight">sangrando</span> e fecho os ralos antes de escalar.</p>
           <div class="method-step-card__img-container">
-            <img src="assets/diag-clean.png" alt="Diagnóstico" class="method-step-card__img">
+            <img src="assets/diag-clean.png" alt="Diagnóstico" class="method-step-card__img" loading="lazy">
           </div>
         </div>
 
@@ -234,7 +305,7 @@
           <h4 class="method-step-card__title">Escalar seu plano <span class="bg-highlight">acima dos R$ 100 mil</span> de Lucro por mês</h4>
           <p class="method-step-card__desc">Gestão ativa e expansão estratégica para garantir escala constante, lucrativa e previsível.</p>
           <div class="method-step-card__img-container">
-            <img src="assets/escala-clean.png" alt="Escala de Lucro" class="method-step-card__img">
+            <img src="assets/escala-clean.png" alt="Escala de Lucro" class="method-step-card__img" loading="lazy">
           </div>
         </div>
       </div>
@@ -244,6 +315,68 @@
       </div>
     </div>
   </section>
+
+  <!-- ========== CALCULADORA DE ROI ========== -->
+  <section class="roi-calc section--light" id="calculadora">
+    <div class="container">
+      <div class="section-header anim-up">
+        <span class="section-tag">CALCULADORA</span>
+        <h2 class="section-title section-title--dark">Quanto dinheiro você está <span class="bg-highlight">deixando na mesa?</span></h2>
+        <p class="section-desc section-desc--dark">Descubra o potencial oculto da sua operação em 10 segundos.</p>
+      </div>
+      <div class="roi-calc__card anim-up">
+        <div class="roi-calc__inputs">
+          <div class="roi-calc__field">
+            <label for="roiFaturamento">Faturamento mensal atual</label>
+            <div class="roi-calc__input-wrap">
+              <span class="roi-calc__prefix">R$</span>
+              <input type="text" id="roiFaturamento" inputmode="numeric" placeholder="50.000" autocomplete="off">
+            </div>
+          </div>
+          <div class="roi-calc__field">
+            <label for="roiMargem">Margem de lucro atual</label>
+            <div class="roi-calc__input-wrap">
+              <input type="text" id="roiMargem" inputmode="numeric" placeholder="15" autocomplete="off">
+              <span class="roi-calc__suffix">%</span>
+            </div>
+          </div>
+          <div class="roi-calc__field">
+            <label for="roiAds">% do faturamento em Ads</label>
+            <div class="roi-calc__input-wrap">
+              <input type="text" id="roiAds" inputmode="numeric" placeholder="10" autocomplete="off">
+              <span class="roi-calc__suffix">%</span>
+            </div>
+          </div>
+          <button class="btn btn--primary btn--full roi-calc__btn" id="roiCalcBtn">
+            Calcular meu potencial
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+        <div class="roi-calc__results" id="roiResults">
+          <div class="roi-calc__result-card roi-calc__result--loss">
+            <span class="roi-calc__result-label">Você está perdendo por mês</span>
+            <span class="roi-calc__result-value" id="roiLoss">R$ 0</span>
+            <span class="roi-calc__result-sub">em lucro não capturado</span>
+          </div>
+          <div class="roi-calc__result-card roi-calc__result--gain">
+            <span class="roi-calc__result-label">Com gestão profissional</span>
+            <span class="roi-calc__result-value" id="roiGain">R$ 0</span>
+            <span class="roi-calc__result-sub">potencial de lucro mensal</span>
+          </div>
+          <div class="roi-calc__result-card roi-calc__result--annual">
+            <span class="roi-calc__result-label">Em 12 meses</span>
+            <span class="roi-calc__result-value" id="roiAnnual">R$ 0</span>
+            <span class="roi-calc__result-sub">potencial acumulado</span>
+          </div>
+          <a href="#cta-final" class="btn btn--primary btn--full cta-track" data-event="AddToCart" id="roiCta" style="display:none;">
+            Quero recuperar esse valor
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="glow-line"></div>
 
   <!-- ========== MARQUEE STRIP 2 ========== -->
   <div class="marquee marquee--reverse">
@@ -382,7 +515,7 @@
 
         <div class="bastidores__card anim-up el-2">
           <div class="bastidores__media-wrapper">
-             <img src="/assets/bastidores-lucas.webp" alt="Lucas Veloso no Mercado Livre" class="bastidores__img">
+             <img src="/assets/bastidores-lucas.webp" alt="Lucas Veloso no Mercado Livre" class="bastidores__img" loading="lazy">
              <div class="bastidores__badge">No Meli</div>
           </div>
           <p class="bastidores__text">Relacionamento e presença onde as decisões de marketplace acontecem.</p>
@@ -390,7 +523,7 @@
 
         <div class="bastidores__card anim-right el-3">
           <div class="bastidores__media-wrapper">
-             <img src="/assets/bastidores-ml.webp" alt="Lucas Veloso expedindo produtos" class="bastidores__img">
+             <img src="/assets/bastidores-ml.webp" alt="Lucas Veloso expedindo produtos" class="bastidores__img" loading="lazy">
              <div class="bastidores__badge">Hands-on</div>
           </div>
           <p class="bastidores__text">Deixamos a operação pronta para escalar. Sem gargalos, sem erros de etiquetas.</p>
@@ -450,7 +583,7 @@
               <p>Marketplace se tornou o <span class="bg-highlight">principal canal de faturamento digital</span> da empresa. <span class="text-highlight" style="color:#059669">Líder do nicho.</span></p>
             </div>
           </div>
-          <div class="case-card__highlight"><span>De zero a referência no segmento em 3 meses</span></div>
+          <div class="case-card__highlight"><span>De zero a referência no segmento <strong>em apenas 3 meses</strong></span></div>
         </div>
         <div class="case-card anim-right el-1">
           <img src="/assets/case-varejo-clean.png" alt="Dashboard Rede Varejista" style="width:100%; height:160px; object-fit:cover; border-bottom:1px solid #f5f5f5; display:block;">
@@ -466,7 +599,7 @@
               <p>Operação <span class="bg-highlight">unificada e automatizada.</span> <span class="text-highlight" style="color:#059669">Tempo do dono devolvido</span> para decisões estratégicas.</p>
             </div>
           </div>
-          <div class="case-card__highlight"><span>Catálogo centralizado, operação no piloto automático</span></div>
+          <div class="case-card__highlight"><span>Catálogo centralizado, operação no piloto automático <strong>em 4 meses</strong></span></div>
         </div>
       </div>
 
@@ -652,6 +785,101 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
     </a>
   </div>
+
+  <!-- ========== EXIT INTENT POPUP ========== -->
+  <div class="exit-popup" id="exitPopup">
+    <div class="exit-popup__overlay" id="exitPopupOverlay"></div>
+    <div class="exit-popup__card">
+      <button class="exit-popup__close" id="exitPopupClose" aria-label="Fechar">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      <div class="exit-popup__icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--c-primary)" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3 class="exit-popup__title">Antes de sair...</h3>
+      <p class="exit-popup__text">Descubra os <strong>7 erros que drenam lucro</strong> no marketplace e como corrigi-los agora.</p>
+      <a href="#cta-final" class="btn btn--primary btn--full exit-popup__cta" id="exitPopupCta">
+        Quero o diagnóstico gratuito
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <span class="exit-popup__note">Sessão de 30 min. 100% gratuito.</span>
+    </div>
+  </div>
+
+  <!-- ========== SOCIAL PROOF NOTIFICATION ========== -->
+  <div class="social-proof-toast" id="socialProofToast">
+    <div class="social-proof-toast__icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--c-success)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+    </div>
+    <div class="social-proof-toast__text">
+      <strong id="proofCompany">Empresa de Cosméticos</strong>
+      <span id="proofAction">solicitou diagnóstico</span>
+      <small id="proofTime">há 2 horas</small>
+    </div>
+  </div>
+
+  <!-- ========== WHATSAPP FLOATING (DESKTOP + MOBILE) ========== -->
+  <a href="https://wa.me/55SEUNUMERO?text=Ol%C3%A1%2C%20quero%20um%20diagn%C3%B3stico%20da%20minha%20opera%C3%A7%C3%A3o" class="whatsapp-float" id="whatsappFloat" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="#B2FE02"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <!-- ========== FAQ STRUCTURED DATA (AEO-Ready) ========== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Tem fidelidade ou contrato mínimo?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Setup em 30 dias. Gestão mensal sem fidelidade rígida. Resultados consistentes exigem no mínimo 3 meses de trabalho contínuo."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Minha conta é pequena. Você atende?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tamanho não é critério. Critério: produto validado, capacidade logística e vontade de escalar. Já levei operações do zero absoluto a canal principal de faturamento em 90 dias."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como funciona a verba de Ads?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Verba paga por você diretamente às plataformas. Eu não toco no seu dinheiro. Validamos orgânico primeiro. Ads só entram quando faz sentido financeiro."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "O que você NÃO faz?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SAC ao consumidor, reclamações pós-venda, logística (picking/packing), produção de fotos. Foco: estratégia, posicionamento e escala."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "E se as 10 vagas estiverem cheias?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Lista de espera prioritária. Rotação a cada 2-3 meses. Quanto antes entrar, antes será atendido."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como é o bônus de performance?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Opcional. Pequeno percentual sobre o crescimento excedente de uma meta combinada. Eu só ganho mais se você ganhar MUITO mais."
+        }
+      }
+    ]
+  }
+  </script>
 
   <script type="module" src="/js/main.js"></script>
 </body>
