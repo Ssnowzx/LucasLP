@@ -52,7 +52,7 @@ document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el))
 /* ============================================================
    DYNAMIC SCARCITY — Day-based vagas counter
    ============================================================ */
-const vagasMap = [0, 2, 3, 3, 4, 4, 5]
+const vagasMap = [7, 7, 8, 8, 8, 9, 7]
 const vagasEl = document.getElementById('vagasCounter')
 if (vagasEl) {
   vagasEl.textContent = vagasMap[new Date().getDay()]
