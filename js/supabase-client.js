@@ -3,23 +3,30 @@
  * Data layer that replaces localStorage with Supabase
  */
 
-const SUPABASE_URL = 'https://ygxkzmdvdlxidhwgunvy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlneGt6bWR2ZGx4aWRod2d1bnZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MDQ4NDIsImV4cCI6MjA5MDM4MDg0Mn0.z7GFT63Exy-AshLz-gfg4CUmFJkG1GZ_Pwm8wgGTwLQ';
-
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// Initialize globals immediately
-window.supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+// Initialize essentials immediately on window
+window.SUPABASE_URL = 'https://ygxkzmdvdlxidhwgunvy.supabase.co';
+window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlneGt6bWR2ZGx4aWRod2d1bnZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MDQ4NDIsImV4cCI6MjA5MDM4MDg0Mn0.z7GFT63Exy-AshLz-gfg4CUmFJkG1GZ_Pwm8wgGTwLQ';
 window.db = {};
 window._authReady = null;
+window.supabaseClient = null;
 
+(function initSupabase() {
+  try {
+    if (window.supabase) {
+      window.supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+    }
+  } catch (e) {
+    console.error('Supabase init crash:', e);
+  }
+})();
+
+// ============================================================
+//  AUTH GUARD — Block dashboard until authenticated
+// ============================================================
 if (!window.supabaseClient) {
   console.error('Supabase library not found! Check script order.');
   document.documentElement.style.visibility = 'visible';
 } else {
-  // Hide body immediately (redundant but safe)
-  document.documentElement.style.visibility = 'hidden';
-
   window._authReady = window.supabaseClient.auth.getSession().then(function(res) {
     if (!res.data.session) {
       window.location.replace('/login.html');
@@ -38,7 +45,15 @@ if (!window.supabaseClient) {
   });
 }
 
-// Logout function — clear session completely
+// Fallback visibility (Show page after 3s if guard hangs)
+setTimeout(function() {
+  if (document.documentElement.style.visibility === 'hidden') {
+    console.warn('Auth guard timeout — forcing visibility');
+    document.documentElement.style.visibility = 'visible';
+  }
+}, 3000);
+
+// Logout function
 window.logout = function() {
   if (window.supabaseClient) {
     window.supabaseClient.auth.signOut({ scope: 'local' }).then(function() {
@@ -52,10 +67,7 @@ window.logout = function() {
 // ============================================================
 //  DATA LAYER — Maps between JS state shape and DB columns
 // ============================================================
-
-// Assign functions to the global window.db object
 Object.assign(window.db, {
-  // --- TASKS ---
   async loadTasks() {
     if (!window.supabaseClient) return [];
     const { data, error } = await window.supabaseClient.from('tasks').select('*').order('created_at', { ascending: true });
@@ -81,8 +93,6 @@ Object.assign(window.db, {
     const { error } = await window.supabaseClient.from('tasks').delete().eq('id', id);
     if (error) console.error('deleteTask:', error);
   },
-
-  // --- FINANCES ---
   async loadFinances() {
     if (!window.supabaseClient) return [];
     const { data, error } = await window.supabaseClient.from('finances').select('*').order('date', { ascending: false });
@@ -106,8 +116,6 @@ Object.assign(window.db, {
     const { error } = await window.supabaseClient.from('finances').delete().eq('id', id);
     if (error) console.error('deleteFinance:', error);
   },
-
-  // --- CLIENTS ---
   async loadClients() {
     if (!window.supabaseClient) return [];
     const { data, error } = await window.supabaseClient.from('clients').select('*').order('created_at', { ascending: true });
@@ -132,8 +140,6 @@ Object.assign(window.db, {
     const { error } = await window.supabaseClient.from('clients').delete().eq('id', id);
     if (error) console.error('deleteClient:', error);
   },
-
-  // --- GOALS ---
   async loadGoals() {
     if (!window.supabaseClient) return [];
     const { data, error } = await window.supabaseClient.from('goals').select('*').order('created_at', { ascending: true });
@@ -159,8 +165,6 @@ Object.assign(window.db, {
     const { error } = await window.supabaseClient.from('goals').delete().eq('id', id);
     if (error) console.error('deleteGoal:', error);
   },
-
-  // --- NOTES ---
   async loadNotes() {
     if (!window.supabaseClient) return [];
     const { data, error } = await window.supabaseClient.from('notes').select('*').order('created_at', { ascending: false }).limit(50);
@@ -175,8 +179,6 @@ Object.assign(window.db, {
     const { error } = await window.supabaseClient.from('notes').upsert([row], { onConflict: 'id' });
     if (error) console.error('saveNote:', error);
   },
-
-  // --- SETTINGS ---
   async loadSettings() {
     if (!window.supabaseClient) return { currentUser: 'lucas', sidebarMinimized: false, portfolioStartDate: '2026-03-01' };
     const { data, error } = await window.supabaseClient.from('settings').select('*').eq('id', 'default').single();
@@ -197,8 +199,6 @@ Object.assign(window.db, {
     }], { onConflict: 'id' });
     if (error) console.error('saveSettings:', error);
   },
-
-  // --- FBADS CONFIG ---
   async loadFbadsConfig() {
     if (!window.supabaseClient) return { accessToken: '', adAccountId: '', connected: false };
     const { data, error } = await window.supabaseClient.from('fbads_config').select('*').eq('id', 'default').single();
@@ -215,8 +215,6 @@ Object.assign(window.db, {
     }], { onConflict: 'id' });
     if (error) console.error('saveFbadsConfig:', error);
   },
-
-  // --- FBADS CAMPAIGNS ---
   async loadFbadsCampaigns() {
     if (!window.supabaseClient) return [];
     const { data, error } = await window.supabaseClient.from('fbads_campaigns').select('*').order('updated_at', { ascending: false });
@@ -239,7 +237,7 @@ Object.assign(window.db, {
       ctr: c.ctr || 0, cpc: c.cpc || 0, cpm: c.cpm || 0,
       start_date: c.startDate || null, end_date: c.endDate || null,
       owner: c.owner || 'lucas', fb_id: c.fbId || '', notes: c.notes || '',
-      created_at: c.createdAt, updated_at: c.updatedAt || new Date().toISOString()
+      created_at: c.createdAt, updatedAt: c.updatedAt || new Date().toISOString()
     }));
     const { error } = await window.supabaseClient.from('fbads_campaigns').upsert(rows, { onConflict: 'id' });
     if (error) console.error('saveFbadsCampaigns:', error);
@@ -249,8 +247,6 @@ Object.assign(window.db, {
     const { error } = await window.supabaseClient.from('fbads_campaigns').delete().eq('id', id);
     if (error) console.error('deleteFbadsCampaign:', error);
   },
-
-  // --- LOAD ALL ---
   async loadAll() {
     const [tasks, finances, clients, goals, notes, settings, fbadsConfig, fbadsCampaigns] = await Promise.all([
       window.db.loadTasks(), window.db.loadFinances(), window.db.loadClients(), window.db.loadGoals(),
@@ -258,8 +254,6 @@ Object.assign(window.db, {
     ]);
     return { tasks, finances, clients, goals, notes, settings, fbadsConfig, fbadsCampaigns };
   },
-
-  // --- SAVE ALL ---
   async saveAll(state) {
     await Promise.all([
       window.db.saveTasks(state.tasks),

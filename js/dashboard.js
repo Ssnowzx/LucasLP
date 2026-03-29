@@ -16,7 +16,7 @@ let _saving = false;
 function saveAll() {
   if (_saving) return;
   _saving = true;
-  db.saveAll(state).finally(function() { _saving = false; });
+  window.db.saveAll(state).finally(function() { _saving = false; });
 }
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
@@ -360,19 +360,19 @@ window.requestDelete = function(type, id, label) {
 
 window.confirmDelete = function() {
   if (pendingDeleteType === 'task') {
-    db.deleteTask(pendingDeleteId);
+    window.db.deleteTask(pendingDeleteId);
     state.tasks = state.tasks.filter(t => t.id !== pendingDeleteId);
   } else if (pendingDeleteType === 'finance') {
-    db.deleteFinance(pendingDeleteId);
+    window.db.deleteFinance(pendingDeleteId);
     state.finances = state.finances.filter(f => f.id !== pendingDeleteId);
   } else if (pendingDeleteType === 'client') {
-    db.deleteClient(pendingDeleteId);
+    window.db.deleteClient(pendingDeleteId);
     state.clients = state.clients.filter(c => c.id !== pendingDeleteId);
   } else if (pendingDeleteType === 'goal') {
-    db.deleteGoal(pendingDeleteId);
+    window.db.deleteGoal(pendingDeleteId);
     state.goals = state.goals.filter(g => g.id !== pendingDeleteId);
   } else if (pendingDeleteType === 'fbcampaign') {
-    db.deleteFbadsCampaign(pendingDeleteId);
+    window.db.deleteFbadsCampaign(pendingDeleteId);
     state.fbadsCampaigns = state.fbadsCampaigns.filter(c => c.id !== pendingDeleteId);
   }
   closeModal('modalConfirm');
@@ -818,7 +818,7 @@ window.addNote = function() {
   var note = { id: uid(), text: text, user: state.settings.currentUser, createdAt: isoDate() };
   state.notes.unshift(note);
   if (state.notes.length > 50) state.notes = state.notes.slice(0, 50);
-  db.saveNote(note);
+  window.db.saveNote(note);
   input.value = '';
   renderNotes();
 };
@@ -1266,7 +1266,7 @@ function renderAll() {
 document.addEventListener('DOMContentLoaded', function() {
   function startDashboard() {
     // Load from Supabase then initialize UI
-    db.loadAll().then(function(data) {
+    window.db.loadAll().then(function(data) {
       state = data;
 
       // Auto-detect logged-in user from Supabase Auth
