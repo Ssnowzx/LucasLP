@@ -575,7 +575,11 @@ section{padding:80px 0 100px}
 .step-card__desc{font-size:.9rem;color:var(--c-text-muted);line-height:1.6;margin-bottom:16px}
 .step-card__time{font-size:.75rem;font-weight:700;color:var(--c-primary);background:var(--c-primary-glow);padding:4px 12px;border-radius:var(--radius-full);border:1px solid rgba(178,254,2,.15)}
 .step-card__connector{display:flex;align-items:center;padding:0 8px;flex-shrink:0}
-@media(max-width:860px){.steps__grid{flex-direction:column;gap:24px;max-width:400px}.step-card__connector{transform:rotate(90deg);padding:0}}
+@media(max-width:860px){
+  .steps__grid{flex-direction:column;gap:12px;max-width:400px}
+  .step-card{width:100%}
+  .step-card__connector{transform:rotate(90deg) !important;padding:12px 0;justify-content:center}
+}
 
 /* ============================================================
    ROI CALCULATOR
