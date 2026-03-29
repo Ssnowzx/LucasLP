@@ -328,7 +328,7 @@ section{padding:80px 0 100px}
 .boutique-master-card .gradient-text{background:linear-gradient(270deg,#3AFF5F,#B2FE02) !important;-webkit-background-clip:text !important;-webkit-text-fill-color:transparent !important}.boutique-master-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,transparent,var(--c-primary),transparent);z-index:5}
 .boutique-master-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at top,rgba(178,254,2,0.05) 0%,transparent 70%);pointer-events:none}
 
-#boutique .section-title{font-size:1.6rem;line-height:1.2;margin-bottom:8px}
+
 .boutique__content{flex:1.4}
 .boutique__desc{font-size:0.9rem;color:rgba(255,255,255,0.6);line-height:1.5;margin-top:12px}
 .boutique__visual{flex:0.6}
