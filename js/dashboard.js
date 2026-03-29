@@ -1,49 +1,22 @@
 /**
  * Vantage Command — Dashboard Engine v2.0 (Sidebar Layout)
  * Squad Poseidon | Ocean Theme
- * localStorage -> Supabase Ready
+ * Powered by Supabase
  */
 
-const STORAGE = {
-  tasks: 'vantage_tasks_v2',
-  finances: 'vantage_finances_v2',
-  clients: 'vantage_clients_v2',
-  goals: 'vantage_goals_v2',
-  notes: 'vantage_notes_v2',
-  settings: 'vantage_settings_v2',
-  fbadsConfig: 'vantage_fbads_config_v2',
-  fbadsCampaigns: 'vantage_fbads_campaigns_v2'
+let state = {
+  tasks: [], finances: [], clients: [], goals: [], notes: [],
+  settings: { currentUser: 'lucas', sidebarMinimized: false, portfolioStartDate: '2026-03-01' },
+  fbadsConfig: { accessToken: '', adAccountId: '', connected: false },
+  fbadsCampaigns: []
 };
-
-function loadState() {
-  return {
-    tasks: JSON.parse(localStorage.getItem(STORAGE.tasks)) || [],
-    finances: JSON.parse(localStorage.getItem(STORAGE.finances)) || [],
-    clients: JSON.parse(localStorage.getItem(STORAGE.clients)) || [],
-    goals: JSON.parse(localStorage.getItem(STORAGE.goals)) || [],
-    notes: JSON.parse(localStorage.getItem(STORAGE.notes)) || [],
-    settings: JSON.parse(localStorage.getItem(STORAGE.settings)) || { 
-      currentUser: 'lucas', 
-      sidebarMinimized: false,
-      portfolioStartDate: '2026-03-01' 
-    },
-    fbadsConfig: JSON.parse(localStorage.getItem(STORAGE.fbadsConfig)) || { accessToken: '', adAccountId: '', connected: false },
-    fbadsCampaigns: JSON.parse(localStorage.getItem(STORAGE.fbadsCampaigns)) || []
-  };
-}
-
-let state = loadState();
 let currentPage = 'overview';
+let _saving = false;
 
 function saveAll() {
-  localStorage.setItem(STORAGE.tasks, JSON.stringify(state.tasks));
-  localStorage.setItem(STORAGE.finances, JSON.stringify(state.finances));
-  localStorage.setItem(STORAGE.clients, JSON.stringify(state.clients));
-  localStorage.setItem(STORAGE.goals, JSON.stringify(state.goals));
-  localStorage.setItem(STORAGE.notes, JSON.stringify(state.notes));
-  localStorage.setItem(STORAGE.settings, JSON.stringify(state.settings));
-  localStorage.setItem(STORAGE.fbadsConfig, JSON.stringify(state.fbadsConfig));
-  localStorage.setItem(STORAGE.fbadsCampaigns, JSON.stringify(state.fbadsCampaigns));
+  if (_saving) return;
+  _saving = true;
+  db.saveAll(state).finally(function() { _saving = false; });
 }
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
@@ -397,17 +370,21 @@ window.requestDelete = function(type, id, label) {
 
 window.confirmDelete = function() {
   if (pendingDeleteType === 'task') {
+    db.deleteTask(pendingDeleteId);
     state.tasks = state.tasks.filter(t => t.id !== pendingDeleteId);
   } else if (pendingDeleteType === 'finance') {
+    db.deleteFinance(pendingDeleteId);
     state.finances = state.finances.filter(f => f.id !== pendingDeleteId);
   } else if (pendingDeleteType === 'client') {
+    db.deleteClient(pendingDeleteId);
     state.clients = state.clients.filter(c => c.id !== pendingDeleteId);
   } else if (pendingDeleteType === 'goal') {
+    db.deleteGoal(pendingDeleteId);
     state.goals = state.goals.filter(g => g.id !== pendingDeleteId);
   } else if (pendingDeleteType === 'fbcampaign') {
+    db.deleteFbadsCampaign(pendingDeleteId);
     state.fbadsCampaigns = state.fbadsCampaigns.filter(c => c.id !== pendingDeleteId);
   }
-  saveAll();
   closeModal('modalConfirm');
   renderAll();
   pendingDeleteType = null;
@@ -848,14 +825,10 @@ window.addNote = function() {
   var input = document.getElementById('noteInput');
   var text = input.value.trim();
   if (!text) return;
-  state.notes.unshift({
-    id: uid(),
-    text: text,
-    user: state.settings.currentUser,
-    createdAt: isoDate()
-  });
+  var note = { id: uid(), text: text, user: state.settings.currentUser, createdAt: isoDate() };
+  state.notes.unshift(note);
   if (state.notes.length > 50) state.notes = state.notes.slice(0, 50);
-  saveAll();
+  db.saveNote(note);
   input.value = '';
   renderNotes();
 };
@@ -1301,33 +1274,38 @@ function renderAll() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  updateGreeting();
-  updateUserBadges();
-  setDefaultFinDate();
-  setupTouchDrag();
-  setupNoteEnter();
-  initCharts();
-  initFbCharts();
-  updateFbConfigStatus();
-  renderAll();
+  // Load from Supabase then initialize UI
+  db.loadAll().then(function(data) {
+    state = data;
 
-  // Restore sidebar state
-  if (state.settings.sidebarMinimized) {
-    document.getElementById('sidebar').classList.add('minimized');
-    document.querySelector('.main-area').classList.add('sidebar-minimized');
-  }
+    updateGreeting();
+    updateUserBadges();
+    setDefaultFinDate();
+    setupTouchDrag();
+    setupNoteEnter();
+    initCharts();
+    initFbCharts();
+    updateFbConfigStatus();
+    renderAll();
 
-  // Finance modal default date
-  var modalFinEl = document.getElementById('modalFinance');
-  var observer = new MutationObserver(() => {
-    if (modalFinEl && modalFinEl.classList.contains('active')) setDefaultFinDate();
-  });
-  observer.observe(modalFinEl, { attributes: true, attributeFilter: ['class'] });
-
-  // Responsive sidebar on resize
-  window.addEventListener('resize', function() {
-    if (window.innerWidth > 768) {
-      document.getElementById('sidebar').classList.remove('active');
+    // Restore sidebar state
+    if (state.settings.sidebarMinimized) {
+      document.getElementById('sidebar').classList.add('minimized');
+      document.querySelector('.main-area').classList.add('sidebar-minimized');
     }
+
+    // Finance modal default date
+    var modalFinEl = document.getElementById('modalFinance');
+    var observer = new MutationObserver(function() {
+      if (modalFinEl && modalFinEl.classList.contains('active')) setDefaultFinDate();
+    });
+    observer.observe(modalFinEl, { attributes: true, attributeFilter: ['class'] });
+
+    // Responsive sidebar on resize
+    window.addEventListener('resize', function() {
+      if (window.innerWidth > 768) {
+        document.getElementById('sidebar').classList.remove('active');
+      }
+    });
   });
 });
