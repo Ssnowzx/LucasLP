@@ -1264,8 +1264,7 @@ function renderAll() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Wait for Auth Guard to confirm it's safe to load
-  (window._authReady || Promise.resolve()).then(function() {
+  function startDashboard() {
     // Load from Supabase then initialize UI
     db.loadAll().then(function(data) {
       state = data;
@@ -1307,10 +1306,22 @@ document.addEventListener('DOMContentLoaded', function() {
           document.getElementById('sidebar').classList.remove('active');
         }
       });
+    }).catch(function(err) {
+      console.error('Data load error:', err);
     });
-  }).catch(function(err) {
-    if (err.message !== 'not authenticated') {
-       console.error('Core init error:', err);
+  }
+
+  function waitForAuthAndStart() {
+    if (window._authReady) {
+      window._authReady.then(startDashboard).catch(function(err) {
+        if (err.message !== 'not authenticated') {
+          console.error('Core init error:', err);
+        }
+      });
+    } else {
+      setTimeout(waitForAuthAndStart, 50);
     }
-  });
+  }
+
+  waitForAuthAndStart();
 });
