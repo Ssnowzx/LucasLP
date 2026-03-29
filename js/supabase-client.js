@@ -9,6 +9,30 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ============================================================
+//  AUTH GUARD — Block dashboard until authenticated
+// ============================================================
+// Hide body immediately until auth is confirmed
+document.documentElement.style.visibility = 'hidden';
+
+window._authReady = supabase.auth.getSession().then(function(res) {
+  if (!res.data.session) {
+    window.location.replace('/login.html');
+    throw new Error('not authenticated');
+  }
+  window.authUser = res.data.session.user;
+  window.authUserName = (res.data.session.user.user_metadata && res.data.session.user.user_metadata.name) || 'Lucas';
+  document.documentElement.style.visibility = 'visible';
+  return res.data.session;
+});
+
+// Logout function — clear session completely
+window.logout = function() {
+  supabase.auth.signOut({ scope: 'local' }).then(function() {
+    window.location.replace('/login.html');
+  });
+};
+
+// ============================================================
 //  DATA LAYER — Maps between JS state shape and DB columns
 // ============================================================
 

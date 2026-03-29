@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Vantage Command</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --ocean-bg: #0B1215;
+      --ocean-surface: #162125;
+      --ocean-surface-light: #1E2B30;
+      --sea-foam: #7DD3FC;
+      --sea-foam-dim: rgba(125,211,252,.15);
+      --pearl: #F1F5F9;
+      --shell: #94A3B8;
+      --coral: #FCA5A5;
+    }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--ocean-bg);
+      color: var(--pearl);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+    }
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      padding: 48px 36px;
+      background: var(--ocean-surface);
+      border: 1px solid rgba(125,211,252,.08);
+      border-radius: 16px;
+      box-shadow: 0 25px 80px rgba(0,0,0,.5);
+    }
+    .login-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .login-logo svg { color: var(--sea-foam); }
+    .login-logo span {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      color: var(--pearl);
+    }
+    .login-subtitle {
+      text-align: center;
+      color: var(--shell);
+      font-size: .85rem;
+      margin-bottom: 36px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--shell);
+      margin-bottom: 6px;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--ocean-surface-light);
+      border: 1px solid rgba(125,211,252,.1);
+      border-radius: 10px;
+      color: var(--pearl);
+      font-family: inherit;
+      font-size: .95rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .form-group input:focus {
+      border-color: var(--sea-foam);
+      box-shadow: 0 0 0 3px var(--sea-foam-dim);
+    }
+    .form-group input::placeholder { color: rgba(148,163,184,.4); }
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--sea-foam);
+      color: #0B1215;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      margin-top: 8px;
+    }
+    .login-btn:hover { opacity: .9; }
+    .login-btn:active { transform: scale(.98); }
+    .login-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+    .login-error {
+      display: none;
+      margin-top: 16px;
+      padding: 10px 14px;
+      background: rgba(252,165,165,.08);
+      border: 1px solid rgba(252,165,165,.2);
+      border-radius: 8px;
+      color: var(--coral);
+      font-size: .85rem;
+      text-align: center;
+    }
+    .login-error.visible { display: block; }
+    @media (max-width: 440px) {
+      .login-card { margin: 16px; padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="login-logo">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+      <span>VANTAGE COMMAND</span>
+    </div>
+    <p class="login-subtitle">Centro de Comando — Acesso Restrito</p>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="seu@email.com" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input type="password" id="password" placeholder="••••••" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">Entrar</button>
+    </form>
+
+    <div class="login-error" id="loginError"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    var SUPABASE_URL = 'https://ygxkzmdvdlxidhwgunvy.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlneGt6bWR2ZGx4aWRod2d1bnZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MDQ4NDIsImV4cCI6MjA5MDM4MDg0Mn0.z7GFT63Exy-AshLz-gfg4CUmFJkG1GZ_Pwm8wgGTwLQ';
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // If already logged in, redirect
+    sb.auth.getSession().then(function(res) {
+      if (res.data.session) {
+        window.location.href = '/dashboard.html';
+      }
+    });
+
+    function handleLogin(e) {
+      e.preventDefault();
+      var btn = document.getElementById('loginBtn');
+      var errorEl = document.getElementById('loginError');
+      var email = document.getElementById('email').value.trim();
+      var password = document.getElementById('password').value;
+
+      btn.disabled = true;
+      btn.textContent = 'Entrando...';
+      errorEl.classList.remove('visible');
+
+      sb.auth.signInWithPassword({ email: email, password: password })
+        .then(function(res) {
+          if (res.error) {
+            errorEl.textContent = 'Email ou senha incorretos.';
+            errorEl.classList.add('visible');
+            btn.disabled = false;
+            btn.textContent = 'Entrar';
+          } else {
+            window.location.href = '/dashboard.html';
+          }
+        })
+        .catch(function() {
+          errorEl.textContent = 'Erro de conexao. Tente novamente.';
+          errorEl.classList.add('visible');
+          btn.disabled = false;
+          btn.textContent = 'Entrar';
+        });
+    }
+  </script>
+</body>
+</html>

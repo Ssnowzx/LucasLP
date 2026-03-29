@@ -114,16 +114,6 @@ function openSidebar() {
   }
 }
 
-// ============================================================
-//  USER & GREETING
-// ============================================================
-window.toggleUser = function() {
-  state.settings.currentUser = state.settings.currentUser === 'lucas' ? 'rodrigo' : 'lucas';
-  saveAll();
-  updateUserBadges();
-  updateGreeting();
-};
-
 function updateUserBadges() {
   var isLucas = state.settings.currentUser === 'lucas';
   document.getElementById('userAvatarSidebar').textContent = isLucas ? 'L' : 'R';
@@ -1274,38 +1264,53 @@ function renderAll() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Load from Supabase then initialize UI
-  db.loadAll().then(function(data) {
-    state = data;
+  // Wait for Auth Guard to confirm it's safe to load
+  (window._authReady || Promise.resolve()).then(function() {
+    // Load from Supabase then initialize UI
+    db.loadAll().then(function(data) {
+      state = data;
 
-    updateGreeting();
-    updateUserBadges();
-    setDefaultFinDate();
-    setupTouchDrag();
-    setupNoteEnter();
-    initCharts();
-    initFbCharts();
-    updateFbConfigStatus();
-    renderAll();
-
-    // Restore sidebar state
-    if (state.settings.sidebarMinimized) {
-      document.getElementById('sidebar').classList.add('minimized');
-      document.querySelector('.main-area').classList.add('sidebar-minimized');
-    }
-
-    // Finance modal default date
-    var modalFinEl = document.getElementById('modalFinance');
-    var observer = new MutationObserver(function() {
-      if (modalFinEl && modalFinEl.classList.contains('active')) setDefaultFinDate();
-    });
-    observer.observe(modalFinEl, { attributes: true, attributeFilter: ['class'] });
-
-    // Responsive sidebar on resize
-    window.addEventListener('resize', function() {
-      if (window.innerWidth > 768) {
-        document.getElementById('sidebar').classList.remove('active');
+      // Auto-detect logged-in user from Supabase Auth
+      if (window.authUserName) {
+        var detectedUser = window.authUserName.toLowerCase() === 'rodrigo' ? 'rodrigo' : 'lucas';
+        if (state.settings.currentUser !== detectedUser) {
+          state.settings.currentUser = detectedUser;
+        }
       }
+
+      updateGreeting();
+      updateUserBadges();
+      setDefaultFinDate();
+      setupTouchDrag();
+      setupNoteEnter();
+      initCharts();
+      initFbCharts();
+      updateFbConfigStatus();
+      renderAll();
+
+      // Restore sidebar state
+      if (state.settings.sidebarMinimized) {
+        document.getElementById('sidebar').classList.add('minimized');
+        document.querySelector('.main-area').classList.add('sidebar-minimized');
+      }
+
+      // Finance modal default date
+      var modalFinEl = document.getElementById('modalFinance');
+      var observer = new MutationObserver(function() {
+        if (modalFinEl && modalFinEl.classList.contains('active')) setDefaultFinDate();
+      });
+      observer.observe(modalFinEl, { attributes: true, attributeFilter: ['class'] });
+
+      // Responsive sidebar on resize
+      window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+          document.getElementById('sidebar').classList.remove('active');
+        }
+      });
     });
+  }).catch(function(err) {
+    if (err.message !== 'not authenticated') {
+       console.error('Core init error:', err);
+    }
   });
 });

@@ -157,6 +157,20 @@ body {
 .user-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--sea-foam); color: var(--ocean-bg); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
 .user-name { opacity: 1; transition: opacity var(--transition); }
 .sidebar.minimized .user-name { opacity: 0; width: 0; display: none; }
+.logout-btn {
+  width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  margin-top: 0.5rem;
+  border-radius: var(--radius-md);
+  background: transparent; color: var(--shell-muted);
+  border: 1px solid var(--ocean-border);
+  cursor: pointer; font-family: inherit; font-size: 0.75rem; font-weight: 500;
+  transition: all 0.2s;
+}
+.logout-btn:hover { border-color: var(--starfish-coral); color: var(--starfish-coral); }
+.logout-text { opacity: 1; transition: opacity 0.2s; }
+.sidebar.minimized .logout-text { opacity: 0; width: 0; display: none; }
 
 /* === PAGE HEADER === */
 .page-header {
