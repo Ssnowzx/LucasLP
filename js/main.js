@@ -146,7 +146,7 @@ document.querySelectorAll('.cta-track').forEach(btn => {
   })
 })
 
-const sectionTrack = { investimento: 'ViewContent', 'cta-final': 'Lead' }
+const sectionTrack = { investimento: 'ViewContent', 'cta-final': 'Lead', calculadora: 'ViewContent' }
 
 const pixelObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -162,3 +162,160 @@ Object.keys(sectionTrack).forEach(id => {
   const el = document.getElementById(id)
   if (el) pixelObserver.observe(el)
 })
+
+/* ============================================================
+   SCROLL PROGRESS BAR
+   ============================================================ */
+const scrollProgress = document.getElementById('scrollProgress')
+if (scrollProgress) {
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight
+    const scrollPercent = (scrollTop / docHeight) * 100
+    scrollProgress.style.width = scrollPercent + '%'
+  }, { passive: true })
+}
+
+/* ============================================================
+   ROI CALCULATOR
+   ============================================================ */
+const roiCalcBtn = document.getElementById('roiCalcBtn')
+if (roiCalcBtn) {
+  function parseNumericInput(val) {
+    return parseFloat(val.replace(/[^\d.,]/g, '').replace(',', '.')) || 0
+  }
+
+  function formatCurrency(val) {
+    return 'R$ ' + val.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+  }
+
+  function animateValue(el, targetVal, formatted) {
+    const duration = 1200
+    const start = performance.now()
+    const startVal = 0
+    function tick(now) {
+      const elapsed = now - start
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      const current = Math.round(startVal + (targetVal - startVal) * eased)
+      el.textContent = formatCurrency(current)
+      if (progress < 1) requestAnimationFrame(tick)
+      else el.textContent = formatted
+    }
+    requestAnimationFrame(tick)
+  }
+
+  roiCalcBtn.addEventListener('click', () => {
+    const faturamento = parseNumericInput(document.getElementById('roiFaturamento').value)
+    const margem = parseNumericInput(document.getElementById('roiMargem').value)
+    const ads = parseNumericInput(document.getElementById('roiAds').value)
+
+    if (faturamento <= 0) {
+      document.getElementById('roiFaturamento').focus()
+      return
+    }
+
+    const lucroAtual = faturamento * (margem / 100)
+    const gastoAds = faturamento * (ads / 100)
+    const desperdicio = gastoAds * 0.35
+    const lucroNaoCapturado = faturamento * 0.25
+    const perda = Math.round(desperdicio + lucroNaoCapturado)
+    const potencial = Math.round(lucroAtual + perda * 0.6)
+    const anual = potencial * 12
+
+    const roiLoss = document.getElementById('roiLoss')
+    const roiGain = document.getElementById('roiGain')
+    const roiAnnual = document.getElementById('roiAnnual')
+    const roiCta = document.getElementById('roiCta')
+
+    animateValue(roiLoss, perda, formatCurrency(perda))
+    animateValue(roiGain, potencial, formatCurrency(potencial))
+    animateValue(roiAnnual, anual, formatCurrency(anual))
+
+    roiCta.style.display = 'inline-flex'
+
+    if (typeof fbq !== 'undefined') {
+      fbq('track', 'ViewContent', { content_name: 'roi_calculator', value: faturamento })
+    }
+  })
+}
+
+/* ============================================================
+   EXIT INTENT POPUP
+   ============================================================ */
+const exitPopup = document.getElementById('exitPopup')
+if (exitPopup) {
+  let exitShown = false
+
+  function showExitPopup() {
+    if (exitShown) return
+    exitShown = true
+    exitPopup.classList.add('active')
+    if (typeof fbq !== 'undefined') {
+      fbq('track', 'ViewContent', { content_name: 'exit_intent' })
+    }
+  }
+
+  function hideExitPopup() {
+    exitPopup.classList.remove('active')
+  }
+
+  document.addEventListener('mouseout', (e) => {
+    if (!e.relatedTarget && e.clientY < 10) {
+      showExitPopup()
+    }
+  })
+
+  document.getElementById('exitPopupClose').addEventListener('click', hideExitPopup)
+  document.getElementById('exitPopupOverlay').addEventListener('click', hideExitPopup)
+  document.getElementById('exitPopupCta').addEventListener('click', hideExitPopup)
+}
+
+/* ============================================================
+   SOCIAL PROOF TOAST — Rotating notifications
+   ============================================================ */
+const proofToast = document.getElementById('socialProofToast')
+if (proofToast) {
+  const proofData = [
+    { company: 'Indústria de Calçados', action: 'solicitou diagnóstico', time: 'há 2 horas' },
+    { company: 'Rede de Cosméticos', action: 'iniciou onboarding', time: 'há 4 horas' },
+    { company: 'Distribuidora de EPIs', action: 'solicitou diagnóstico', time: 'há 6 horas' },
+    { company: 'E-commerce de Eletrônicos', action: 'entrou na gestão', time: 'há 1 dia' },
+    { company: 'Loja de Suplementos', action: 'solicitou diagnóstico', time: 'há 1 dia' }
+  ]
+
+  let proofIndex = 0
+  const proofCompany = document.getElementById('proofCompany')
+  const proofAction = document.getElementById('proofAction')
+  const proofTime = document.getElementById('proofTime')
+
+  function showProofToast() {
+    const data = proofData[proofIndex]
+    proofCompany.textContent = data.company
+    proofAction.textContent = data.action
+    proofTime.textContent = data.time
+    proofToast.classList.add('visible')
+
+    setTimeout(() => {
+      proofToast.classList.remove('visible')
+      proofIndex = (proofIndex + 1) % proofData.length
+    }, 4000)
+  }
+
+  setTimeout(showProofToast, 8000)
+  setInterval(showProofToast, 25000)
+}
+
+/* ============================================================
+   WHATSAPP FLOATING BUTTON — Show after scroll
+   ============================================================ */
+const whatsappFloat = document.getElementById('whatsappFloat')
+if (whatsappFloat) {
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 600) {
+      whatsappFloat.classList.add('visible')
+    } else {
+      whatsappFloat.classList.remove('visible')
+    }
+  }, { passive: true })
+}
