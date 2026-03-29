@@ -325,7 +325,7 @@ section{padding:80px 0 100px}
 .section--dark.boutique--featured{background:#050508}
 .section--light.boutique--featured{background:#ffffff}
 .boutique-master-card{background:#0a0a0f;border:1px solid rgba(178,254,2,0.22);border-radius:32px;padding:40px 48px;display:flex;align-items:center;gap:48px;max-width:1000px;margin:16px auto;position:relative;box-shadow:0 0 50px rgba(0,0,0,0.5), inset 0 4px 12px rgba(178,254,2,0.2);overflow:hidden;z-index:2}
-.boutique-master-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,transparent,var(--c-primary),transparent);z-index:5}
+.boutique-master-card .gradient-text{background:linear-gradient(270deg,#3AFF5F,#B2FE02) !important;-webkit-background-clip:text !important;-webkit-text-fill-color:transparent !important}.boutique-master-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,transparent,var(--c-primary),transparent);z-index:5}
 .boutique-master-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at top,rgba(178,254,2,0.05) 0%,transparent 70%);pointer-events:none}
 
 #boutique .section-title{font-size:1.6rem;line-height:1.2;margin-bottom:8px}
