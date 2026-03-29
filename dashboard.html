@@ -56,6 +56,10 @@
                     <span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l1-7h16l1 7"/><path d="M12 11v6"/><path d="M8 11v2a4 4 0 0 0 8 0v-2"/><rect x="4" y="17" width="16" height="4" rx="1"/></svg></span>
                     <span class="menu-label">Facebook Ads</span>
                 </a>
+                <a href="#" class="menu-item" data-page="leads" onclick="navigateTo('leads', event)">
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                    <span class="menu-label">Leads (Diagnósticos)</span>
+                </a>
             </nav>
 
             <div class="sidebar-footer">
@@ -650,6 +654,61 @@
                             <div class="chart-card">
                                 <h3 class="chart-title">ROAS por Campanha</h3>
                                 <div class="chart-container"><canvas id="chartFbROAS"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE: LEADS -->
+                <div class="page-view" id="page-leads">
+                    <div class="page-intro">
+                        <div class="intro-box">
+                            <h2>Leads de Diagnóstico</h2>
+                            <p>Empresas que solicitaram uma reunião estratégica de 30 minutos através da Landing Page.</p>
+                            <div class="intro-tips">
+                                <div class="tips-header">
+                                    <strong>💡 Próximos Passos</strong>
+                                    <button class="tips-toggle" onclick="toggleTips(this)">−</button>
+                                </div>
+                                <ul>
+                                    <li><strong>WhatsApp:</strong> Clique no número para iniciar a conversa instantaneamente</li>
+                                    <li><strong>Análise:</strong> Veja o objetivo do lead antes de entrar em contato</li>
+                                    <li><strong>Conversão:</strong> Após o diagnóstico, adicione o lead ao pipeline de clientes</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Base de Diagnósticos</h2>
+                            <div class="header-actions">
+                                <button class="btn-primary" onclick="loadDashboardLeads()">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:6px">
+                                        <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                                    </svg>
+                                    Atualizar Lista
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="finance-table-wrapper">
+                            <table class="v-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Nome / Empresa</th>
+                                        <th>WhatsApp</th>
+                                        <th>Faturamento</th>
+                                        <th>Foco</th>
+                                        <th>Objetivo</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leadsBody"></tbody>
+                            </table>
+                            <div class="empty-state" id="leadsEmpty" style="display:none;">
+                                <p>Nenhum lead capturado ainda. Divulgue sua Landing Page!</p>
                             </div>
                         </div>
                     </div>

@@ -27,19 +27,26 @@ if (!window.supabaseClient) {
   console.error('Supabase library not found! Check script order.');
   document.documentElement.style.visibility = 'visible';
 } else {
+  // Only redirect if on dashboard.html
+  const isDashboard = window.location.pathname.includes('dashboard.html');
+
   window._authReady = window.supabaseClient.auth.getSession().then(function(res) {
-    if (!res.data.session) {
+    if (isDashboard && !res.data.session) {
       window.location.replace('/login.html');
       throw new Error('not authenticated');
     }
-    window.authUser = res.data.session.user;
-    window.authUserName = (res.data.session.user.user_metadata && res.data.session.user.user_metadata.name) || 'Lucas';
+    
+    if (res.data.session) {
+      window.authUser = res.data.session.user;
+      window.authUserName = (res.data.session.user.user_metadata && res.data.session.user.user_metadata.name) || 'Lucas';
+    }
+    
     document.documentElement.style.visibility = 'visible';
     return res.data.session;
   }).catch(function(err) {
+    document.documentElement.style.visibility = 'visible';
     if (err.message !== 'not authenticated') {
       console.error('Auth Guard Error:', err);
-      document.documentElement.style.visibility = 'visible';
     }
     throw err;
   });
@@ -247,12 +254,34 @@ Object.assign(window.db, {
     const { error } = await window.supabaseClient.from('fbads_campaigns').delete().eq('id', id);
     if (error) console.error('deleteFbadsCampaign:', error);
   },
+  async saveLead(lead) {
+    if (!window.supabaseClient) return false;
+    const row = {
+      name: lead.name,
+      email: lead.email,
+      whatsapp: lead.whatsapp,
+      revenue: lead.revenue,
+      focus: lead.focus,
+      goal: lead.goal,
+      created_at: new Date().toISOString()
+    };
+    const { error } = await window.supabaseClient.from('leads').insert([row]);
+    if (error) console.error('saveLead error:', error);
+    return !error;
+  },
+  async loadLeads() {
+    if (!window.supabaseClient) return [];
+    const { data, error } = await window.supabaseClient.from('leads').select('*').order('created_at', { ascending: false });
+    if (error) { console.error('loadLeads error:', error); return []; }
+    return data;
+  },
   async loadAll() {
-    const [tasks, finances, clients, goals, notes, settings, fbadsConfig, fbadsCampaigns] = await Promise.all([
+    const [tasks, finances, clients, goals, notes, settings, fbadsConfig, fbadsCampaigns, leads] = await Promise.all([
       window.db.loadTasks(), window.db.loadFinances(), window.db.loadClients(), window.db.loadGoals(),
-      window.db.loadNotes(), window.db.loadSettings(), window.db.loadFbadsConfig(), window.db.loadFbadsCampaigns()
+      window.db.loadNotes(), window.db.loadSettings(), window.db.loadFbadsConfig(), window.db.loadFbadsCampaigns(),
+      window.db.loadLeads()
     ]);
-    return { tasks, finances, clients, goals, notes, settings, fbadsConfig, fbadsCampaigns };
+    return { tasks, finances, clients, goals, notes, settings, fbadsConfig, fbadsCampaigns, leads };
   },
   async saveAll(state) {
     await Promise.all([

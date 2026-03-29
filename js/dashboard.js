@@ -8,7 +8,8 @@ let state = {
   tasks: [], finances: [], clients: [], goals: [], notes: [],
   settings: { currentUser: 'lucas', sidebarMinimized: false, portfolioStartDate: '2026-03-01' },
   fbadsConfig: { accessToken: '', adAccountId: '', connected: false },
-  fbadsCampaigns: []
+  fbadsCampaigns: [],
+  leads: []
 };
 let currentPage = 'overview';
 let _saving = false;
@@ -70,7 +71,8 @@ window.navigateTo = function(pageName, event) {
     pipeline: 'Pipeline',
     goals: 'Metas',
     notes: 'Notas',
-    fbads: 'Facebook Ads'
+    fbads: 'Facebook Ads',
+    leads: 'Leads (Diagnósticos)'
   };
   document.getElementById('pageBreadcrumb').textContent = labels[pageName] || pageName;
 
@@ -1247,6 +1249,51 @@ function getLast6Months() {
 }
 
 // ============================================================
+//  LEADS (DIAGNÓSTICOS)
+// ============================================================
+window.loadDashboardLeads = function() {
+  if (!window.db.loadLeads) return;
+  window.db.loadLeads().then(function(leads) {
+    state.leads = leads;
+    renderLeads();
+  });
+};
+
+function renderLeads() {
+  var body = document.getElementById('leadsBody');
+  if (!body) return;
+  
+  var leads = state.leads || [];
+  body.innerHTML = '';
+  var emptyEl = document.getElementById('leadsEmpty');
+
+  if (leads.length === 0) {
+    emptyEl.style.display = 'block';
+  } else {
+    emptyEl.style.display = 'none';
+    leads.forEach(function(l) {
+      var row = document.createElement('tr');
+      // WhatsApp link formatting
+      var cleanPhone = (l.whatsapp || '').replace(/\D/g, '');
+      var wppUrl = 'https://wa.me/' + cleanPhone;
+      
+      row.innerHTML =
+        '<td>' + formatDateTime(l.created_at) + '</td>' +
+        '<td><strong>' + sanitize(l.name) + '</strong><br><small style="opacity:0.6">' + sanitize(l.email) + '</small></td>' +
+        '<td><a href="' + wppUrl + '" target="_blank" class="val-income" style="font-weight:700">' + sanitize(l.whatsapp) + '</a></td>' +
+        '<td>' + sanitize(l.revenue) + '</td>' +
+        '<td>' + sanitize(l.focus) + '</td>' +
+        '<td><div style="max-width:200px; white-space:normal; font-size:0.8rem">' + sanitize(l.goal) + '</div></td>' +
+        '<td><span class="status-tag status--income">Novo</span></td>' +
+        '<td>' +
+          '<button class="btn-primary btn-sm" onclick="alert(\'Convertendo lead...\')" style="padding:4px 8px; font-size:0.7rem">Converter</button>' +
+        '</td>';
+      body.appendChild(row);
+    });
+  }
+}
+
+// ============================================================
 //  INITIALIZATION
 // ============================================================
 function renderAll() {
@@ -1261,6 +1308,7 @@ function renderAll() {
   renderFbCampaigns();
   updateFbKPIs();
   updateFbCharts();
+  renderLeads();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -1285,6 +1333,7 @@ document.addEventListener('DOMContentLoaded', function() {
       initCharts();
       initFbCharts();
       updateFbConfigStatus();
+      loadDashboardLeads();
       renderAll();
 
       // Restore sidebar state

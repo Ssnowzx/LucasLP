@@ -266,9 +266,9 @@ if (exitPopup) {
     }
   })
 
-  document.getElementById('exitPopupClose').addEventListener('click', hideExitPopup)
-  document.getElementById('exitPopupOverlay').addEventListener('click', hideExitPopup)
-  document.getElementById('exitPopupCta').addEventListener('click', hideExitPopup)
+  document.getElementById('exitPopupClose')?.addEventListener('click', hideExitPopup)
+  document.getElementById('exitPopupOverlay')?.addEventListener('click', hideExitPopup)
+  document.getElementById('exitPopupCta')?.addEventListener('click', hideExitPopup)
 }
 
 /* ============================================================
@@ -318,4 +318,91 @@ if (whatsappFloat) {
       whatsappFloat.classList.remove('visible')
     }
   }, { passive: true })
+}
+
+/* ============================================================
+   DIAGNÓSTICO MODAL LOGIC
+   ============================================================ */
+const diagModal = document.getElementById('diagModal');
+const leadForm = document.getElementById('leadForm');
+const leadSuccess = document.getElementById('leadSuccess');
+
+window.openDiagModal = function() {
+  if (diagModal) diagModal.classList.add('active');
+  // Track open event
+  if (typeof fbq !== 'undefined') {
+    fbq('track', 'InitiateCheckout', { content_name: 'diagnostic_modal' });
+  }
+}
+
+window.closeDiagModal = function() {
+  if (diagModal) {
+    diagModal.classList.remove('active');
+    // Wait for transition, then reset form state
+    setTimeout(() => {
+      if (leadForm) leadForm.style.display = 'block';
+      if (leadSuccess) leadSuccess.style.display = 'none';
+      if (leadForm) leadForm.reset();
+    }, 400)
+  }
+}
+
+// Global listeners for buttons
+document.querySelectorAll('.btn-diagnostico').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openDiagModal();
+  });
+});
+
+// Close listeners
+document.getElementById('diagModalClose')?.addEventListener('click', closeDiagModal);
+document.getElementById('diagModalOverlay')?.addEventListener('click', closeDiagModal);
+
+// Form Submission
+if (leadForm) {
+  leadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = document.getElementById('leadSubmit');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = 'Enviando...';
+    }
+
+    const formData = new FormData(leadForm);
+    const leadData = Object.fromEntries(formData.entries());
+
+    try {
+      if (window.db && window.db.saveLead) {
+        const success = await window.db.saveLead(leadData);
+        if (success) {
+          // Track Lead event
+          if (typeof fbq !== 'undefined') {
+            fbq('track', 'Lead', { 
+              content_name: 'diagnostic_form',
+              value: 0,
+              currency: 'BRL'
+            });
+          }
+
+          // Show Success State
+          leadForm.style.display = 'none';
+          leadSuccess.style.display = 'block';
+        } else {
+          alert('Ocorreu um erro ao enviar. Por favor, tente novamente ou entre em contato via WhatsApp.');
+        }
+      } else {
+        console.error('Database client not ready');
+        alert('Sistema em manutenção. Por favor, use o WhatsApp para contato direto.');
+      }
+    } catch (err) {
+      console.error('Submission error:', err);
+      alert('Erro inesperado. Tente novamente em instantes.');
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `Enviar para Diagnóstico <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>`;
+      }
+    }
+  });
 }

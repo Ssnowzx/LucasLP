@@ -10,6 +10,9 @@
   <meta name="theme-color" content="#0a0a0f">
   <title>Lucas Veloso | Gestão Estratégica de Marketplaces</title>
 
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <!-- Facebook Pixel -->
   <script>
     !function (f, b, e, v, n, t, s) {
@@ -82,7 +85,7 @@
         <a href="#investimento">Investimento</a>
         <a href="#faq">FAQ</a>
       </div>
-      <a href="#cta-final" class="btn btn--primary btn--sm navbar__cta">Diagnóstico Gratuito</a>
+      <button class="btn btn--primary btn--sm navbar__cta btn-diagnostico">Diagnóstico Gratuito</button>
       <button class="navbar__hamburger" id="hamburger" aria-label="Abrir menu">
         <span></span><span></span><span></span>
       </button>
@@ -92,7 +95,7 @@
       <a href="#cases">Resultados</a>
       <a href="#investimento">Investimento</a>
       <a href="#faq">FAQ</a>
-      <a href="#cta-final" class="btn btn--primary btn--full">Diagnóstico Gratuito</a>
+      <button class="btn btn--primary btn--full btn-diagnostico">Diagnóstico Gratuito</button>
     </div>
   </nav>
 
@@ -136,13 +139,13 @@
       </p>
       <div class="hero__ctas anim-up el-5">
         <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
-          <a href="#cta-final" class="btn btn--primary btn--xl cta-track" data-event="InitiateCheckout"
+          <button class="btn btn--primary btn--xl cta-track btn-diagnostico" data-event="InitiateCheckout"
             style="width:100%;">
             Solicitar Diagnóstico Gratuito
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
-          </a>
+          </button>
           <span style="font-size:0.85rem; font-weight:600; color:var(--c-text-muted);">🔒 Sessão de 30 minutos. Zero
             compromisso.</span>
         </div>
@@ -235,7 +238,7 @@
       </div>
 
       <div class="section-cta anim-up">
-        <a href="#cta-final" class="btn btn--primary btn--lg cta-track" data-event="ViewContent">Diagnosticar minha operação</a>
+        <button class="btn btn--primary btn--lg cta-track btn-diagnostico" data-event="ViewContent">Diagnosticar minha operação</button>
       </div>
     </div>
   </section>
@@ -313,7 +316,7 @@
       </div>
 
       <div class="section-cta anim-up">
-        <a href="#cta-final" class="btn btn--primary btn--lg cta-track" data-event="ViewContent">Começar minha gestão estratégica</a>
+        <button class="btn btn--primary btn--lg cta-track btn-diagnostico" data-event="ViewContent">Começar minha gestão estratégica</button>
       </div>
     </div>
   </section>
@@ -375,7 +378,7 @@
         </div>
       </div>
       <div class="section-cta anim-up">
-        <a href="#cta-final" class="btn btn--primary btn--lg cta-track" data-event="ViewContent">Começar pelo diagnóstico gratuito</a>
+        <button class="btn btn--primary btn--lg cta-track btn-diagnostico" data-event="ViewContent">Começar pelo diagnóstico gratuito</button>
       </div>
     </div>
   </section>
@@ -664,8 +667,7 @@
       </div>
 
       <div class="section-cta anim-up">
-        <a href="#cta-final" class="btn btn--primary btn--lg cta-track" data-event="ViewContent">Quero resultados como
-          esses</a>
+        <button class="btn btn--primary btn--lg cta-track btn-diagnostico" data-event="ViewContent">Quero resultados como esses</button>
       </div>
     </div>
   </section>
@@ -843,10 +845,9 @@
         </div>
 
         <div class="cta-card__side">
-          <a href="SEU_LINK_CALENDLY_AQUI" class="btn btn--primary cta-card__btn cta-track" data-event="Schedule"
-            target="_blank" rel="noopener">
+          <button class="btn btn--primary cta-card__btn cta-track btn-diagnostico" data-event="Schedule">
             Solicitar diagnóstico gratuito
-          </a>
+          </button>
           <p class="cta-card__wpp">Prefere WhatsApp? <a href="https://wa.me/55SEUNUMERO?text=Diagn%C3%B3stico"
               target="_blank" rel="noopener">Falar agora</a></p>
           <div class="cta-card__note">30 min. Direto ao ponto.</div>
@@ -881,12 +882,12 @@
 
   <!-- ========== FLOATING CTA (Mobile) ========== -->
   <div class="floating-cta" id="floatingCta">
-    <a href="#cta-final" class="btn btn--primary btn--full cta-track" data-event="InitiateCheckout">
+    <button class="btn btn--primary btn--full cta-track btn-diagnostico" data-event="InitiateCheckout">
       Solicitar diagnóstico gratuito
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M5 12h14M12 5l7 7-7 7" />
       </svg>
-    </a>
+    </button>
   </div>
 
   <!-- ========== EXIT INTENT POPUP ========== -->
@@ -906,12 +907,12 @@
       <h3 class="exit-popup__title">Antes de sair...</h3>
       <p class="exit-popup__text">Descubra os <strong>7 erros que drenam lucro</strong> no marketplace e como
         corrigi-los agora.</p>
-      <a href="#cta-final" class="btn btn--primary btn--full exit-popup__cta" id="exitPopupCta">
+      <button class="btn btn--primary btn--full exit-popup__cta btn-diagnostico" data-event="ViewContent">
         Quero o diagnóstico gratuito
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M5 12h14M12 5l7 7-7 7" />
         </svg>
-      </a>
+      </button>
       <span class="exit-popup__note">Sessão de 30 min. 100% gratuito.</span>
     </div>
   </div>
@@ -998,6 +999,101 @@
   }
   </script>
 
+  <!-- ========== DIAGNÓSTICO MODAL (POPUP) ========== -->
+  <div class="modal-form" id="diagModal">
+    <div class="modal-form__overlay" id="diagModalOverlay"></div>
+    <div class="modal-form__content">
+      <button class="modal-form__close" id="diagModalClose" aria-label="Fechar">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+
+      <div class="modal-form__header">
+        <span class="section-tag">DIAGNÓSTICO GRATUITO</span>
+        <h3 class="modal-form__title">Transforme sua operação em <span class="gradient-text">Boutique</span>.</h3>
+        <p class="modal-form__sub">Preencha os dados abaixo para nossa reunião estratégica de 30 minutos.</p>
+      </div>
+
+      <form class="lead-form" id="leadForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="leadName">Nome Completo</label>
+            <input type="text" id="leadName" name="name" placeholder="Como podemos te chamar?" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="leadWhatsapp">WhatsApp com DDD</label>
+            <input type="tel" id="leadWhatsapp" name="whatsapp" placeholder="(00) 00000-0000" required>
+          </div>
+          <div class="form-group">
+            <label for="leadEmail">E-mail Corporativo</label>
+            <input type="email" id="leadEmail" name="email" placeholder="seu@email.com" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="leadRevenue">Faturamento Mensal Atual</label>
+            <select id="leadRevenue" name="revenue" required>
+              <option value="" disabled selected>Selecione uma opção</option>
+              <option value="Ainda não vendo">Ainda não vendo (Iniciante)</option>
+              <option value="Até R$ 10k">Até R$ 10k / mês</option>
+              <option value="R$ 10k a R$ 50k">R$ 10k a R$ 50k / mês</option>
+              <option value="Acima de R$ 50k">Acima de R$ 50k / mês</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="leadFocus">Qual seu marketplace foco?</label>
+            <select id="leadFocus" name="focus" required>
+              <option value="" disabled selected>Onde quer crescer?</option>
+              <option value="Mercado Livre">Mercado Livre</option>
+              <option value="Amazon">Amazon</option>
+              <option value="Shopee">Shopee</option>
+              <option value="Magalu">Magalu</option>
+              <option value="Todos / Outros">Todos / Outros</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="leadGoal">Qual o seu maior objetivo hoje?</label>
+          <select id="leadGoal" name="goal" required>
+            <option value="" disabled selected>O que você mais precisa?</option>
+            <option value="Começar do zero no marketplace">Começar do zero no marketplace</option>
+            <option value="Escalar faturamento (Ads/SEO)">Escalar faturamento (Ads/SEO)</option>
+            <option value="Organizar operação e logística">Organizar operação e logística</option>
+            <option value="Recuperar reputação da conta">Recuperar reputação da conta</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full btn--xl" id="leadSubmit">
+          Enviar para Diagnóstico
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </button>
+        <p class="form-note">🔒 Seus dados estão seguros e serão usados apenas para este diagnóstico.</p>
+      </form>
+
+      <!-- Sucesso State (Hidden by default) -->
+      <div class="modal-form__success" id="leadSuccess" style="display:none;">
+        <div class="success-icon">
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--c-primary)" stroke-width="1.5">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <path d="M22 4L12 14.01l-3-3" />
+          </svg>
+        </div>
+        <h4 class="success-title">Dados Recebidos!</h4>
+        <p class="success-text">O Lucas recebeu sua solicitação e entrará em contato via WhatsApp em breve para agendar sua sessão.</p>
+        <button class="btn btn--primary btn--full" onclick="closeDiagModal()">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/supabase-client.js"></script>
   <script type="module" src="/js/main.js"></script>
 </body>
 
