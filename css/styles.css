@@ -537,9 +537,7 @@ section{padding:80px 0 100px}
 @media(max-width:768px){.proof-bar{gap:40px;padding:32px 24px}.proof-bar__number{font-size:2.2rem}.proof-bar__tag{font-size:.55rem}}
 
 /* Cases section background (moved from inline) */
-.cases{background-image:linear-gradient(rgba(10,10,15,0.85),rgba(10,10,15,0.95)),url('/assets/resultados-bg.png');background-size:cover;background-position:center}
-@supports(-webkit-touch-callout:none){.cases{background-attachment:scroll}}
-@media(max-width:860px){.cases{background-attachment:scroll}}
+.cases{background:var(--c-bg)}
 
 /* Case card images */
 .case-card>img{border-radius:var(--radius-lg) var(--radius-lg) 0 0}
