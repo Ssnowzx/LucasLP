@@ -255,8 +255,8 @@ function updateInsights(income, prevIncome, expense, prevExpense) {
 
   // Boutique Health
   var activeCount = state.clients.filter(c => c.stage === 'active').length;
-  var statusText = 'Você tem ' + activeCount + ' de 5 slots ocupados.';
-  if (activeCount === 5) statusText += ' **Boutique Lotada!** 🚀';
+  var statusText = 'Você tem ' + activeCount + ' de 10 slots ocupados.';
+  if (activeCount === 10) statusText += ' **Boutique Lotada!** 🚀';
   else statusText += ' Foco em exclusividade.';
   document.getElementById('insightBoutiqueStatus').textContent = statusText;
 }
@@ -621,8 +621,8 @@ function setDefaultFinDate() {
 // ============================================================
 window.handleClientSubmit = function(e) {
   e.preventDefault();
-  if (state.clients.length >= 5) {
-    alert('Limite de 5 slots boutique atingido!');
+  if (state.clients.length >= 10) {
+    alert('Limite de 10 slots boutique atingido!');
     return;
   }
   state.clients.push({
@@ -701,7 +701,7 @@ function renderPipeline() {
 
     if (stage === 'empty') {
       var usedSlots = state.clients.length;
-      var emptySlots = Math.max(0, 5 - usedSlots);
+      var emptySlots = Math.max(0, 10 - usedSlots);
       for (var i = 0; i < emptySlots; i++) {
         slotsDiv.innerHTML += '<div class="empty-slot">Slot disponivel</div>';
       }
