@@ -249,18 +249,17 @@ section{padding:80px 0 100px}
 /* ============================================================
    PROBLEMS (LIGHT)
    ============================================================ */
-.problems__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.problems__grid .problem-card:last-child{grid-column:2 / 3}
-@media(max-width:900px){.problems__grid{grid-template-columns:repeat(2,1fr)}.problems__grid .problem-card:last-child{grid-column:auto}}
+.problems__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+@media(max-width:1100px){.problems__grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:580px){.problems__grid{grid-template-columns:1fr}}
 
-.section--light .problem-card{background:#0a0a0f;border:none;border-radius:var(--radius-lg);padding:40px 32px;transition:var(--transition);box-shadow:0 10px 40px rgba(0,0,0,0.1)}
+.section--light .problem-card{background:#0a0a0f;border:none;border-radius:var(--radius-lg);padding:40px 32px;transition:var(--transition);box-shadow:0 10px 40px rgba(0,0,0,0.1);display:flex;flex-direction:column;height:100%}
 .section--light .problem-card:hover{transform:translateY(-8px);box-shadow:0 20px 64px rgba(0,0,0,0.2)}
-.problem-card__icon{width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--c-primary);border-radius:12px;color:#0a0a0f;margin-bottom:24px;transition:var(--transition)}
+.problem-card__icon{width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--c-primary);border-radius:12px;color:#0a0a0f;margin-bottom:24px;transition:var(--transition);flex-shrink:0}
 .section--light .problem-card:hover .problem-card__icon{transform:scale(1.1);box-shadow:0 0 20px rgba(178,254,2,0.4)}
 .problem-card__title{font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.2}
-.problem-card__text{font-size:.95rem;color:rgba(255,255,255,0.7);margin-bottom:28px;line-height:1.6}
-.problem-card__cost{font-size:.75rem;font-weight:700;color:var(--c-primary);text-transform:uppercase;letter-spacing:.08em;padding:10px 20px;background:rgba(178,254,2,0.1);border:1px solid rgba(178,254,2,0.2);border-radius:var(--radius-full);display:inline-block}
+.problem-card__text{font-size:.95rem;color:rgba(255,255,255,0.7);margin-bottom:28px;line-height:1.6;flex-grow:1}
+.problem-card__cost{font-size:.75rem;font-weight:700;color:var(--c-primary);text-transform:uppercase;letter-spacing:.08em;padding:10px 20px;background:rgba(178,254,2,0.1);border:1px solid rgba(178,254,2,0.2);border-radius:var(--radius-full);display:inline-block;margin-top:auto;text-align:center}
 
 .problems__bottom{text-align:center;margin-top:56px;padding:48px;background:#0a0a0f;border:none;border-radius:var(--radius-lg);box-shadow:0 10px 40px rgba(0,0,0,0.1)}
 .section--light .problems__bottom p{font-size:1.15rem;color:#fff;max-width:800px;margin:0 auto;font-weight:500;line-height:1.5}
