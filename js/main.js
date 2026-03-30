@@ -162,6 +162,40 @@ Object.keys(sectionTrack).forEach(id => {
 })
 
 /* ============================================================
+   NUMERICAL COUNTERS (Proof Section)
+   ============================================================ */
+const counters = document.querySelectorAll('.counter')
+if (counters.length > 0) {
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target
+        const target = parseInt(el.getAttribute('data-target'))
+        const suffix = el.getAttribute('data-suffix') || ''
+        const prefix = el.getAttribute('data-prefix') || ''
+        
+        let current = 0
+        const duration = 2000
+        const stepTime = Math.abs(Math.floor(duration / target))
+        
+        const timer = setInterval(() => {
+          current += 1
+          el.textContent = prefix + current + suffix
+          if (current >= target) {
+            el.textContent = prefix + target + suffix
+            clearInterval(timer)
+          }
+        }, stepTime)
+        
+        counterObserver.unobserve(el)
+      }
+    })
+  }, { threshold: 0.5 })
+
+  counters.forEach(c => counterObserver.observe(c))
+}
+
+/* ============================================================
    SCROLL PROGRESS BAR
    ============================================================ */
 const scrollProgress = document.getElementById('scrollProgress')
