@@ -410,17 +410,16 @@ section{padding:80px 0 100px}
 /* ============================================================
    INVESTMENT (LIGHT)
    ============================================================ */
-.investment__comparison{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start}
-@media(max-width:1024px){.investment__comparison{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:580px){.investment__comparison{grid-template-columns:1fr}}
+.investment__comparison{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start;max-width:1000px;margin:0 auto}
+@media(max-width:900px){.investment__comparison{grid-template-columns:1fr;max-width:480px}}
+@media(max-width:580px){.investment__comparison{gap:16px}}
 
 .invest-card{background:#fff;border:1px solid var(--c-border-light);border-radius:var(--radius-lg);padding:24px;transition:var(--transition);position:relative;box-shadow:var(--shadow-card)}
 .invest-card--muted{opacity:.75}
 .invest-card--muted:hover{opacity:1;transform:translateY(-4px)}
 .invest-card--featured{opacity:1;border:2px solid var(--c-primary);box-shadow:0 0 60px rgba(178,254,2,.12);transform:scale(1.04);z-index:1}
 .invest-card--featured:hover{transform:scale(1.06)}
-@media(max-width:1024px){.invest-card--featured{transform:none;grid-column:span 2}.invest-card--featured:hover{transform:translateY(-4px)}}
-@media(max-width:580px){.invest-card--featured{grid-column:span 1}}
+@media(max-width:900px){.invest-card--featured{transform:none;grid-column:span 1}.invest-card--featured:hover{transform:translateY(-4px)}}
 
 .invest-card__ribbon{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#B2FE02,#3AFF5F);color:#0a0a0f;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:6px 20px;border-radius:0 0 var(--radius) var(--radius)}
 .invest-card__header{margin-bottom:14px;padding-top:16px}
