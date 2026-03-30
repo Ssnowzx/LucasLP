@@ -283,7 +283,7 @@ Object.assign(window.db, {
   },
   async updateLeadNotes(id, notes) {
     if (!window.supabaseClient) return false;
-    const { error } = await window.supabaseClient.from('leads').update({ notes: notes, updated_at: new Date().toISOString() }).eq('id', id);
+    const { error } = await window.supabaseClient.from('leads').update({ notes: notes, lost_reason: notes, updated_at: new Date().toISOString() }).eq('id', id);
     if (error) console.error('updateLeadNotes error:', error);
     return !error;
   },

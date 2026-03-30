@@ -1249,9 +1249,22 @@ function getLast6Months() {
 }
 
 // ============================================================
-//  LEADS (DIAGNÓSTICOS) — Sistema de Status e Alertas
+//  LEADS (DIAGNÓSTICOS) — Pipeline Completo com Alertas
 // ============================================================
 var currentLeadFilter = 'todos';
+var LEAD_STATUSES = {
+  novo:          { label: 'Novo',          color: 'var(--sea-foam)',      icon: '🔵' },
+  contatado:     { label: 'Contatado',     color: '#60A5FA',             icon: '📞' },
+  agendado:      { label: 'Agendado',      color: '#A78BFA',             icon: '📅' },
+  em_negociacao: { label: 'Negociando',    color: 'var(--sand-gold)',    icon: '🤝' },
+  fechado:       { label: 'Fechado',       color: 'var(--lagoon-green)', icon: '✅' },
+  perdido:       { label: 'Perdido',       color: 'var(--starfish-coral)', icon: '❌' },
+  sem_resposta:  { label: 'Sem Resposta',  color: 'var(--shell-muted)',  icon: '⏳' }
+};
+
+function countByStatus(leads, status) {
+  return leads.filter(function(l) { return (l.status || 'novo') === status; }).length;
+}
 
 window.loadDashboardLeads = function() {
   if (!window.db.loadLeads) return;
@@ -1259,6 +1272,7 @@ window.loadDashboardLeads = function() {
     state.leads = leads;
     renderLeads();
     updateLeadAlerts();
+    renderOverviewLeads();
   });
 };
 
@@ -1270,6 +1284,14 @@ window.filterLeads = function(filter) {
 };
 
 window.changeLeadStatus = function(id, newStatus) {
+  if (newStatus === 'perdido') {
+    var reason = prompt('Motivo da perda (opcional):');
+    if (reason !== null && window.db.updateLeadNotes) {
+      window.db.updateLeadNotes(id, reason);
+      var lead2 = state.leads.find(function(l) { return l.id === id; });
+      if (lead2) lead2.lost_reason = reason;
+    }
+  }
   if (!window.db.updateLeadStatus) return;
   window.db.updateLeadStatus(id, newStatus).then(function(ok) {
     if (ok) {
@@ -1277,42 +1299,145 @@ window.changeLeadStatus = function(id, newStatus) {
       if (lead) lead.status = newStatus;
       renderLeads();
       updateLeadAlerts();
+      renderOverviewLeads();
     }
   });
 };
 
 function updateLeadAlerts() {
   var leads = state.leads || [];
-  var novos = leads.filter(function(l) { return (l.status || 'novo') === 'novo'; }).length;
-  var andamento = leads.filter(function(l) { return l.status === 'em_andamento'; }).length;
-  var fechados = leads.filter(function(l) { return l.status === 'fechado'; }).length;
+  var novos = countByStatus(leads, 'novo');
+  var contatados = countByStatus(leads, 'contatado');
+  var agendados = countByStatus(leads, 'agendado');
+  var negociando = countByStatus(leads, 'em_negociacao');
+  var fechados = countByStatus(leads, 'fechado');
+  var perdidos = countByStatus(leads, 'perdido');
+  var semResposta = countByStatus(leads, 'sem_resposta');
 
-  var countNovo = document.getElementById('leadsCountNovo');
-  var countAndamento = document.getElementById('leadsCountAndamento');
-  var countFechado = document.getElementById('leadsCountFechado');
-  var countTotal = document.getElementById('leadsCountTotal');
-  if (countNovo) countNovo.textContent = novos;
-  if (countAndamento) countAndamento.textContent = andamento;
-  if (countFechado) countFechado.textContent = fechados;
-  if (countTotal) countTotal.textContent = leads.length;
+  // Leads page KPIs
+  var ids = { leadsCountNovo: novos, leadsCountContatado: contatados, leadsCountAgendado: agendados, leadsCountNegociacao: negociando, leadsCountFechado: fechados, leadsCountPerdido: perdidos };
+  Object.keys(ids).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = ids[id];
+  });
 
+  // Overview insight alert
   var alertCard = document.getElementById('insightLeadAlert');
   var alertText = document.getElementById('insightLeadText');
   if (alertCard && alertText) {
+    var urgent = novos + semResposta;
     if (novos > 0) {
       alertCard.style.display = '';
       alertCard.className = 'insight-card' + (novos >= 3 ? '' : ' success');
       alertText.textContent = novos === 1
-        ? 'Você tem 1 lead novo aguardando contato. Responda rápido para não perder!'
-        : 'Você tem ' + novos + ' leads novos aguardando contato. Não perca oportunidades!';
-    } else if (andamento > 0) {
+        ? '1 lead novo aguardando primeiro contato!'
+        : novos + ' leads novos aguardando primeiro contato!';
+      if (semResposta > 0) alertText.textContent += ' + ' + semResposta + ' sem resposta.';
+    } else if (semResposta > 0) {
+      alertCard.style.display = '';
+      alertCard.className = 'insight-card';
+      alertText.textContent = semResposta + ' lead(s) sem resposta. Tente contato novamente!';
+    } else if (negociando > 0) {
       alertCard.style.display = '';
       alertCard.className = 'insight-card success';
-      alertText.textContent = andamento + ' lead(s) em andamento. Acompanhe de perto para fechar!';
+      alertText.textContent = negociando + ' lead(s) em negociacao. Acompanhe para fechar!';
     } else {
       alertCard.style.display = 'none';
     }
   }
+}
+
+function renderOverviewLeads() {
+  var leads = state.leads || [];
+  var counts = {};
+  Object.keys(LEAD_STATUSES).forEach(function(s) { counts[s] = countByStatus(leads, s); });
+
+  // Overview funnel numbers
+  var ovIds = { ovLeadNovo: counts.novo, ovLeadContatado: counts.contatado, ovLeadAgendado: counts.agendado, ovLeadNegociacao: counts.em_negociacao, ovLeadFechado: counts.fechado, ovLeadPerdido: counts.perdido, ovLeadSemResposta: counts.sem_resposta };
+  Object.keys(ovIds).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = ovIds[id];
+  });
+
+  // Totals
+  var total = leads.length;
+  var convRate = total > 0 ? Math.round((counts.fechado / total) * 100) : 0;
+  var lossRate = total > 0 ? Math.round(((counts.perdido + counts.sem_resposta) / total) * 100) : 0;
+  var totalEl = document.getElementById('ovLeadTotal');
+  var convEl = document.getElementById('ovLeadConvRate');
+  if (totalEl) totalEl.textContent = total + ' leads totais';
+  if (convEl) convEl.textContent = convRate + '% conversao | ' + lossRate + '% perda';
+
+  // Conversion bar
+  var bar = document.getElementById('leadConversionBar');
+  if (bar && total > 0) {
+    var segments = [
+      { count: counts.novo, color: 'var(--sea-foam)' },
+      { count: counts.contatado, color: '#60A5FA' },
+      { count: counts.agendado, color: '#A78BFA' },
+      { count: counts.em_negociacao, color: 'var(--sand-gold)' },
+      { count: counts.fechado, color: 'var(--lagoon-green)' },
+      { count: counts.perdido, color: 'var(--starfish-coral)' },
+      { count: counts.sem_resposta, color: 'var(--shell-muted)' }
+    ];
+    bar.innerHTML = '';
+    segments.forEach(function(seg) {
+      if (seg.count > 0) {
+        var pct = (seg.count / total) * 100;
+        var div = document.createElement('div');
+        div.style.cssText = 'width:' + pct + '%; background:' + seg.color + '; height:100%; transition:width 0.5s;';
+        div.title = seg.count + ' (' + Math.round(pct) + '%)';
+        bar.appendChild(div);
+      }
+    });
+  } else if (bar) {
+    bar.innerHTML = '';
+  }
+
+  // Action list — leads that need attention
+  var actionList = document.getElementById('ovLeadActionList');
+  if (!actionList) return;
+
+  var actionable = leads.filter(function(l) {
+    var s = l.status || 'novo';
+    return s === 'novo' || s === 'sem_resposta' || s === 'contatado' || s === 'agendado' || s === 'em_negociacao';
+  }).slice(0, 8);
+
+  if (actionable.length === 0) {
+    actionList.innerHTML = '<div style="opacity:0.5; font-size:0.8rem; padding:12px;">Todos os leads foram tratados. Bom trabalho!</div>';
+    return;
+  }
+
+  actionList.innerHTML = '';
+  actionable.forEach(function(l) {
+    var s = l.status || 'novo';
+    var info = LEAD_STATUSES[s];
+    var cleanPhone = (l.whatsapp || '').replace(/\D/g, '');
+    var wppUrl = 'https://wa.me/' + cleanPhone;
+
+    var diffMs = Date.now() - new Date(l.created_at).getTime();
+    var diffHours = Math.floor(diffMs / 3600000);
+    var timeLabel = diffHours < 1 ? 'agora' : diffHours < 24 ? 'ha ' + diffHours + 'h' : 'ha ' + Math.floor(diffHours / 24) + 'd';
+    var urgent = (s === 'novo' && diffHours > 24) || s === 'sem_resposta';
+
+    var card = document.createElement('div');
+    card.style.cssText = 'display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--ocean-surface); border-radius:10px; border-left:3px solid ' + info.color + ';' + (urgent ? ' animation: pulse 2s infinite;' : '');
+    card.innerHTML =
+      '<div style="font-size:1.2rem;">' + info.icon + '</div>' +
+      '<div style="flex:1; min-width:0;">' +
+        '<div style="font-weight:600; font-size:0.85rem;">' + sanitize(l.name) + (urgent ? ' <span style="color:var(--starfish-coral); font-size:0.7rem;">⚠️ URGENTE</span>' : '') + '</div>' +
+        '<div style="font-size:0.72rem; opacity:0.6;">' + sanitize(l.focus || '') + ' · ' + sanitize(l.revenue || '') + ' · ' + timeLabel + '</div>' +
+      '</div>' +
+      '<div style="display:flex; gap:6px; flex-shrink:0;">' +
+        '<select onchange="changeLeadStatus(\'' + l.id + '\', this.value)" style="background:' + info.color + '; color:#0B1215; border:none; border-radius:6px; padding:3px 6px; font-size:0.68rem; font-weight:700; cursor:pointer;">' +
+          Object.keys(LEAD_STATUSES).map(function(key) {
+            return '<option value="' + key + '"' + (key === s ? ' selected' : '') + '>' + LEAD_STATUSES[key].icon + ' ' + LEAD_STATUSES[key].label + '</option>';
+          }).join('') +
+        '</select>' +
+        '<a href="' + wppUrl + '?text=Ol%C3%A1%20' + encodeURIComponent(l.name || '') + '!" target="_blank" style="background:var(--lagoon-green); color:#0B1215; border:none; border-radius:6px; padding:3px 8px; font-size:0.68rem; font-weight:700; text-decoration:none; display:flex; align-items:center;">💬</a>' +
+      '</div>';
+    actionList.appendChild(card);
+  });
 }
 
 function renderLeads() {
@@ -1336,16 +1461,13 @@ function renderLeads() {
       var cleanPhone = (l.whatsapp || '').replace(/\D/g, '');
       var wppUrl = 'https://wa.me/' + cleanPhone;
       var status = l.status || 'novo';
-
-      var statusColors = { novo: 'var(--sea-foam)', em_andamento: 'var(--sand-gold)', fechado: 'var(--lagoon-green)' };
-      var statusLabels = { novo: 'Novo', em_andamento: 'Em Andamento', fechado: 'Fechado' };
-      var statusIcons = { novo: '🔵', em_andamento: '🟡', fechado: '🟢' };
+      var info = LEAD_STATUSES[status] || LEAD_STATUSES.novo;
 
       var statusSelect =
-        '<select onchange="changeLeadStatus(\'' + l.id + '\', this.value)" style="background:' + statusColors[status] + '; color:#0B1215; border:none; border-radius:6px; padding:4px 8px; font-size:0.75rem; font-weight:700; cursor:pointer;">' +
-          '<option value="novo"' + (status === 'novo' ? ' selected' : '') + '>' + statusIcons.novo + ' Novo</option>' +
-          '<option value="em_andamento"' + (status === 'em_andamento' ? ' selected' : '') + '>' + statusIcons.em_andamento + ' Em Andamento</option>' +
-          '<option value="fechado"' + (status === 'fechado' ? ' selected' : '') + '>' + statusIcons.fechado + ' Fechado</option>' +
+        '<select onchange="changeLeadStatus(\'' + l.id + '\', this.value)" style="background:' + info.color + '; color:#0B1215; border:none; border-radius:6px; padding:4px 8px; font-size:0.75rem; font-weight:700; cursor:pointer;">' +
+          Object.keys(LEAD_STATUSES).map(function(key) {
+            return '<option value="' + key + '"' + (key === status ? ' selected' : '') + '>' + LEAD_STATUSES[key].icon + ' ' + LEAD_STATUSES[key].label + '</option>';
+          }).join('') +
         '</select>';
 
       var timeSince = '';
@@ -1353,20 +1475,25 @@ function renderLeads() {
         var diffMs = Date.now() - new Date(l.created_at).getTime();
         var diffHours = Math.floor(diffMs / 3600000);
         if (diffHours < 1) timeSince = ' <span style="color:var(--starfish-coral); font-weight:700; font-size:0.7rem">⚡ AGORA</span>';
-        else if (diffHours < 24) timeSince = ' <span style="color:var(--sand-gold); font-size:0.7rem">há ' + diffHours + 'h</span>';
-        else if (diffHours < 48 && status === 'novo') timeSince = ' <span style="color:var(--starfish-coral); font-size:0.7rem">⚠️ +24h sem resposta</span>';
+        else if (diffHours < 24) timeSince = ' <span style="color:var(--sand-gold); font-size:0.7rem">ha ' + diffHours + 'h</span>';
+        else if (diffHours >= 24 && (status === 'novo' || status === 'sem_resposta')) timeSince = ' <span style="color:var(--starfish-coral); font-size:0.7rem">⚠️ +' + Math.floor(diffHours / 24) + 'd sem resposta</span>';
+      }
+
+      var lostInfo = '';
+      if (status === 'perdido' && l.lost_reason) {
+        lostInfo = '<br><small style="color:var(--starfish-coral); font-size:0.7rem;">Motivo: ' + sanitize(l.lost_reason) + '</small>';
       }
 
       row.innerHTML =
         '<td>' + formatDateTime(l.created_at) + timeSince + '</td>' +
-        '<td><strong>' + sanitize(l.name) + '</strong><br><small style="opacity:0.6">' + sanitize(l.email) + '</small></td>' +
+        '<td><strong>' + sanitize(l.name) + '</strong><br><small style="opacity:0.6">' + sanitize(l.email) + '</small>' + lostInfo + '</td>' +
         '<td><a href="' + wppUrl + '" target="_blank" class="val-income" style="font-weight:700">' + sanitize(l.whatsapp) + '</a></td>' +
         '<td>' + sanitize(l.revenue) + '</td>' +
         '<td>' + sanitize(l.focus) + '</td>' +
         '<td><div style="max-width:200px; white-space:normal; font-size:0.8rem">' + sanitize(l.goal) + '</div></td>' +
         '<td>' + statusSelect + '</td>' +
         '<td style="white-space:nowrap">' +
-          '<a href="' + wppUrl + '?text=Ol%C3%A1%20' + encodeURIComponent(l.name || '') + '%2C%20recebi%20seu%20diagn%C3%B3stico!" target="_blank" class="btn-primary btn-sm" style="padding:4px 8px; font-size:0.7rem; text-decoration:none; display:inline-block; margin-right:4px">💬 WhatsApp</a>' +
+          '<a href="' + wppUrl + '?text=Ol%C3%A1%20' + encodeURIComponent(l.name || '') + '%2C%20recebi%20seu%20diagn%C3%B3stico!" target="_blank" class="btn-primary btn-sm" style="padding:4px 8px; font-size:0.7rem; text-decoration:none; display:inline-block;">💬 WhatsApp</a>' +
         '</td>';
       body.appendChild(row);
     });
@@ -1391,6 +1518,7 @@ function renderAll() {
   updateFbKPIs();
   updateFbCharts();
   renderLeads();
+  renderOverviewLeads();
 }
 
 document.addEventListener('DOMContentLoaded', function() {

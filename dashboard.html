@@ -227,6 +227,60 @@
                         </div>
                     </div>
 
+                    <div class="section" id="overview-leads">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                            <h2 class="section-title" style="margin:0;">Pipeline de Leads</h2>
+                            <button class="btn-primary btn-sm" onclick="navigateTo('leads')" style="font-size:0.75rem">Ver Todos →</button>
+                        </div>
+
+                        <!-- Funil Visual -->
+                        <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;" id="leadFunnelBar">
+                            <div class="kpi-card" style="flex:1; min-width:100px; text-align:center; border-left:3px solid var(--sea-foam);">
+                                <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; opacity:0.6; margin-bottom:4px;">Novos</div>
+                                <div style="font-size:1.4rem; font-weight:800; color:var(--sea-foam);" id="ovLeadNovo">0</div>
+                            </div>
+                            <div class="kpi-card" style="flex:1; min-width:100px; text-align:center; border-left:3px solid #60A5FA;">
+                                <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; opacity:0.6; margin-bottom:4px;">Contatados</div>
+                                <div style="font-size:1.4rem; font-weight:800; color:#60A5FA;" id="ovLeadContatado">0</div>
+                            </div>
+                            <div class="kpi-card" style="flex:1; min-width:100px; text-align:center; border-left:3px solid #A78BFA;">
+                                <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; opacity:0.6; margin-bottom:4px;">Agendados</div>
+                                <div style="font-size:1.4rem; font-weight:800; color:#A78BFA;" id="ovLeadAgendado">0</div>
+                            </div>
+                            <div class="kpi-card" style="flex:1; min-width:100px; text-align:center; border-left:3px solid var(--sand-gold);">
+                                <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; opacity:0.6; margin-bottom:4px;">Negociando</div>
+                                <div style="font-size:1.4rem; font-weight:800; color:var(--sand-gold);" id="ovLeadNegociacao">0</div>
+                            </div>
+                            <div class="kpi-card" style="flex:1; min-width:100px; text-align:center; border-left:3px solid var(--lagoon-green);">
+                                <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; opacity:0.6; margin-bottom:4px;">Fechados</div>
+                                <div style="font-size:1.4rem; font-weight:800; color:var(--lagoon-green);" id="ovLeadFechado">0</div>
+                            </div>
+                            <div class="kpi-card" style="flex:1; min-width:100px; text-align:center; border-left:3px solid var(--starfish-coral);">
+                                <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; opacity:0.6; margin-bottom:4px;">Perdidos</div>
+                                <div style="font-size:1.4rem; font-weight:800; color:var(--starfish-coral);" id="ovLeadPerdido">0</div>
+                            </div>
+                            <div class="kpi-card" style="flex:1; min-width:100px; text-align:center; border-left:3px solid var(--shell-muted);">
+                                <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; opacity:0.6; margin-bottom:4px;">Sem Resposta</div>
+                                <div style="font-size:1.4rem; font-weight:800; color:var(--shell-muted);" id="ovLeadSemResposta">0</div>
+                            </div>
+                        </div>
+
+                        <!-- Barra de Conversao -->
+                        <div style="margin-top:12px; background:var(--ocean-surface-light); border-radius:8px; overflow:hidden; height:24px; display:flex;" id="leadConversionBar" title="Taxa de conversao do funil"></div>
+                        <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:0.7rem; opacity:0.5;">
+                            <span id="ovLeadTotal">0 leads totais</span>
+                            <span id="ovLeadConvRate">0% taxa de conversao</span>
+                        </div>
+
+                        <!-- Leads Recentes que precisam de acao -->
+                        <div style="margin-top:20px;">
+                            <h3 style="font-size:0.85rem; font-weight:600; margin-bottom:10px; color:var(--pearl);">Precisam de Ação</h3>
+                            <div id="ovLeadActionList" style="display:flex; flex-direction:column; gap:8px;">
+                                <div style="opacity:0.5; font-size:0.8rem; padding:12px;">Nenhum lead pendente.</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="section" id="overview-charts">
                         <h2 class="section-title">Gráficos de Performance</h2>
                         <div class="charts-grid">
@@ -700,30 +754,42 @@
                             </div>
                         </div>
                         
-                        <div style="display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap;">
-                            <div class="kpi-card" style="flex:1; min-width:120px; text-align:center;">
+                        <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+                            <div class="kpi-card" style="flex:1; min-width:90px; text-align:center; border-left:3px solid var(--sea-foam);">
                                 <div class="kpi-header"><span class="kpi-label">Novos</span></div>
                                 <div class="kpi-value" id="leadsCountNovo" style="color:var(--sea-foam)">0</div>
                             </div>
-                            <div class="kpi-card" style="flex:1; min-width:120px; text-align:center;">
-                                <div class="kpi-header"><span class="kpi-label">Em Andamento</span></div>
-                                <div class="kpi-value" id="leadsCountAndamento" style="color:var(--sand-gold)">0</div>
+                            <div class="kpi-card" style="flex:1; min-width:90px; text-align:center; border-left:3px solid #60A5FA;">
+                                <div class="kpi-header"><span class="kpi-label">Contatados</span></div>
+                                <div class="kpi-value" id="leadsCountContatado" style="color:#60A5FA">0</div>
                             </div>
-                            <div class="kpi-card" style="flex:1; min-width:120px; text-align:center;">
+                            <div class="kpi-card" style="flex:1; min-width:90px; text-align:center; border-left:3px solid #A78BFA;">
+                                <div class="kpi-header"><span class="kpi-label">Agendados</span></div>
+                                <div class="kpi-value" id="leadsCountAgendado" style="color:#A78BFA">0</div>
+                            </div>
+                            <div class="kpi-card" style="flex:1; min-width:90px; text-align:center; border-left:3px solid var(--sand-gold);">
+                                <div class="kpi-header"><span class="kpi-label">Negociando</span></div>
+                                <div class="kpi-value" id="leadsCountNegociacao" style="color:var(--sand-gold)">0</div>
+                            </div>
+                            <div class="kpi-card" style="flex:1; min-width:90px; text-align:center; border-left:3px solid var(--lagoon-green);">
                                 <div class="kpi-header"><span class="kpi-label">Fechados</span></div>
                                 <div class="kpi-value" id="leadsCountFechado" style="color:var(--lagoon-green)">0</div>
                             </div>
-                            <div class="kpi-card" style="flex:1; min-width:120px; text-align:center;">
-                                <div class="kpi-header"><span class="kpi-label">Total</span></div>
-                                <div class="kpi-value" id="leadsCountTotal">0</div>
+                            <div class="kpi-card" style="flex:1; min-width:90px; text-align:center; border-left:3px solid var(--starfish-coral);">
+                                <div class="kpi-header"><span class="kpi-label">Perdidos</span></div>
+                                <div class="kpi-value" id="leadsCountPerdido" style="color:var(--starfish-coral)">0</div>
                             </div>
                         </div>
 
-                        <div style="margin-bottom:12px; display:flex; gap:8px; flex-wrap:wrap;">
-                            <button class="btn-primary btn-sm lead-filter-btn active" onclick="filterLeads('todos')" style="font-size:0.75rem">Todos</button>
-                            <button class="btn-primary btn-sm lead-filter-btn" onclick="filterLeads('novo')" style="font-size:0.75rem; background:var(--sea-foam); color:#0B1215">🔵 Novos</button>
-                            <button class="btn-primary btn-sm lead-filter-btn" onclick="filterLeads('em_andamento')" style="font-size:0.75rem; background:var(--sand-gold); color:#0B1215">🟡 Em Andamento</button>
-                            <button class="btn-primary btn-sm lead-filter-btn" onclick="filterLeads('fechado')" style="font-size:0.75rem; background:var(--lagoon-green); color:#0B1215">🟢 Fechados</button>
+                        <div style="margin-bottom:12px; display:flex; gap:6px; flex-wrap:wrap;">
+                            <button class="btn-primary btn-sm lead-filter-btn active" onclick="filterLeads('todos')" style="font-size:0.72rem">Todos</button>
+                            <button class="btn-primary btn-sm lead-filter-btn" onclick="filterLeads('novo')" style="font-size:0.72rem; background:var(--sea-foam); color:#0B1215">Novos</button>
+                            <button class="btn-primary btn-sm lead-filter-btn" onclick="filterLeads('contatado')" style="font-size:0.72rem; background:#60A5FA; color:#0B1215">Contatados</button>
+                            <button class="btn-primary btn-sm lead-filter-btn" onclick="filterLeads('agendado')" style="font-size:0.72rem; background:#A78BFA; color:#0B1215">Agendados</button>
+                            <button class="btn-primary btn-sm lead-filter-btn" onclick="filterLeads('em_negociacao')" style="font-size:0.72rem; background:var(--sand-gold); color:#0B1215">Negociando</button>
+                            <button class="btn-primary btn-sm lead-filter-btn" onclick="filterLeads('fechado')" style="font-size:0.72rem; background:var(--lagoon-green); color:#0B1215">Fechados</button>
+                            <button class="btn-primary btn-sm lead-filter-btn" onclick="filterLeads('perdido')" style="font-size:0.72rem; background:var(--starfish-coral); color:#0B1215">Perdidos</button>
+                            <button class="btn-primary btn-sm lead-filter-btn" onclick="filterLeads('sem_resposta')" style="font-size:0.72rem; background:var(--shell-muted); color:#0B1215">Sem Resposta</button>
                         </div>
 
                         <div class="finance-table-wrapper">
