@@ -5,11 +5,12 @@ export default defineConfig({
   root: '.',
   build: {
     outDir: 'dist',
-    minify: 'oxc',
+    emptyOutDir: true,
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        dashboard: resolve(__dirname, 'dashboard.html')
+        dashboard: resolve(__dirname, 'dashboard.html'),
+        login: resolve(__dirname, 'login.html')
       }
     }
   },
