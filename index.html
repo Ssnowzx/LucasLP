@@ -8,10 +8,11 @@
     content="Gestão Estratégica de Marketplaces com Lucas Veloso. Do zero ao topo ou da operação travada à escala. Método V.E.C. Operação Boutique: máximo 10 clientes.">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0a0a0f">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://www.facebook.com; connect-src 'self' https://*.supabase.co;">
   <title>Lucas Veloso | Gestão Estratégica de Marketplaces</title>
 
   <!-- Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 
   <!-- Facebook Pixel -->
   <script>
@@ -26,8 +27,9 @@
       s.parentNode.insertBefore(t, s)
     }(window, document, 'script',
       'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', 'SEU_PIXEL_ID_AQUI');
-    fbq('track', 'PageView');
+    // TODO: Substituir pelo Pixel ID real quando a conta for criada
+    // fbq('init', 'SEU_PIXEL_ID_AQUI');
+    // fbq('track', 'PageView');
   </script>
 
   <!-- Fonts -->
@@ -62,8 +64,10 @@
 </head>
 
 <body>
+  <!-- TODO: Descomentar quando Pixel ID estiver configurado
   <noscript><img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=SEU_PIXEL_ID_AQUI&ev=PageView&noscript=1" /></noscript>
+      src="https://www.facebook.com/tr?id=SEU_PIXEL_ID&ev=PageView&noscript=1" /></noscript>
+  -->
 
   <!-- ========== URGENCY BAR ========== -->
   <div class="urgency-bar">
@@ -848,7 +852,7 @@
           <button class="btn btn--primary cta-card__btn cta-track btn-diagnostico" data-event="Schedule">
             Solicitar diagnóstico gratuito
           </button>
-          <p class="cta-card__wpp">Prefere WhatsApp? <a href="https://wa.me/55SEUNUMERO?text=Diagn%C3%B3stico"
+          <p class="cta-card__wpp">Prefere WhatsApp? <a href="https://wa.me/5549998153699?text=Diagn%C3%B3stico"
               target="_blank" rel="noopener">Falar agora</a></p>
           <div class="cta-card__note">30 min. Direto ao ponto.</div>
         </div>
@@ -933,7 +937,7 @@
   </div>
 
   <!-- ========== WHATSAPP FLOATING (DESKTOP + MOBILE) ========== -->
-  <a href="https://wa.me/55SEUNUMERO?text=Ol%C3%A1%2C%20quero%20um%20diagn%C3%B3stico%20da%20minha%20opera%C3%A7%C3%A3o"
+  <a href="https://wa.me/5549998153699?text=Ol%C3%A1%2C%20quero%20um%20diagn%C3%B3stico%20da%20minha%20opera%C3%A7%C3%A3o"
     class="whatsapp-float" id="whatsappFloat" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="#B2FE02">
       <path
@@ -1092,8 +1096,8 @@
     </div>
   </div>
 
-  <script src="/js/supabase-client.js"></script>
-  <script type="module" src="/js/main.js"></script>
+  <script src="/js/supabase-client.js" defer></script>
+  <script src="/js/main.js" defer></script>
 </body>
 
 </html>

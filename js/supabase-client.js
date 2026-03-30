@@ -28,7 +28,7 @@ if (!window.supabaseClient) {
   document.documentElement.style.visibility = 'visible';
 } else {
   // Only redirect if on dashboard.html
-  const isDashboard = window.location.pathname.includes('dashboard.html');
+  const isDashboard = /\/dashboard\.html$/.test(window.location.pathname);
 
   window._authReady = window.supabaseClient.auth.getSession().then(function(res) {
     if (isDashboard && !res.data.session) {

@@ -151,20 +151,24 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/supabase-client.js"></script>
   <script>
-    var SUPABASE_URL = 'https://ygxkzmdvdlxidhwgunvy.supabase.co';
-    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlneGt6bWR2ZGx4aWRod2d1bnZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MDQ4NDIsImV4cCI6MjA5MDM4MDg0Mn0.z7GFT63Exy-AshLz-gfg4CUmFJkG1GZ_Pwm8wgGTwLQ';
-    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     // If already logged in, redirect
-    sb.auth.getSession().then(function(res) {
-      if (res.data.session) {
-        window.location.href = '/dashboard.html';
-      }
-    });
+    if (window.supabaseClient) {
+      window.supabaseClient.auth.getSession().then(function(res) {
+        if (res.data.session) {
+          window.location.href = '/dashboard.html';
+        }
+      });
+    }
 
     function handleLogin(e) {
       e.preventDefault();
+      if (!window.supabaseClient) {
+        document.getElementById('loginError').textContent = 'Erro de conexao. Recarregue a pagina.';
+        document.getElementById('loginError').classList.add('visible');
+        return;
+      }
       var btn = document.getElementById('loginBtn');
       var errorEl = document.getElementById('loginError');
       var email = document.getElementById('email').value.trim();
@@ -174,7 +178,7 @@
       btn.textContent = 'Entrando...';
       errorEl.classList.remove('visible');
 
-      sb.auth.signInWithPassword({ email: email, password: password })
+      window.supabaseClient.auth.signInWithPassword({ email: email, password: password })
         .then(function(res) {
           if (res.error) {
             errorEl.textContent = 'Email ou senha incorretos.';
