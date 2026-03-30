@@ -1249,48 +1249,130 @@ function getLast6Months() {
 }
 
 // ============================================================
-//  LEADS (DIAGNÓSTICOS)
+//  LEADS (DIAGNÓSTICOS) — Sistema de Status e Alertas
 // ============================================================
+var currentLeadFilter = 'todos';
+
 window.loadDashboardLeads = function() {
   if (!window.db.loadLeads) return;
   window.db.loadLeads().then(function(leads) {
     state.leads = leads;
     renderLeads();
+    updateLeadAlerts();
   });
 };
+
+window.filterLeads = function(filter) {
+  currentLeadFilter = filter;
+  document.querySelectorAll('.lead-filter-btn').forEach(function(btn) { btn.classList.remove('active'); });
+  event.target.classList.add('active');
+  renderLeads();
+};
+
+window.changeLeadStatus = function(id, newStatus) {
+  if (!window.db.updateLeadStatus) return;
+  window.db.updateLeadStatus(id, newStatus).then(function(ok) {
+    if (ok) {
+      var lead = state.leads.find(function(l) { return l.id === id; });
+      if (lead) lead.status = newStatus;
+      renderLeads();
+      updateLeadAlerts();
+    }
+  });
+};
+
+function updateLeadAlerts() {
+  var leads = state.leads || [];
+  var novos = leads.filter(function(l) { return (l.status || 'novo') === 'novo'; }).length;
+  var andamento = leads.filter(function(l) { return l.status === 'em_andamento'; }).length;
+  var fechados = leads.filter(function(l) { return l.status === 'fechado'; }).length;
+
+  var countNovo = document.getElementById('leadsCountNovo');
+  var countAndamento = document.getElementById('leadsCountAndamento');
+  var countFechado = document.getElementById('leadsCountFechado');
+  var countTotal = document.getElementById('leadsCountTotal');
+  if (countNovo) countNovo.textContent = novos;
+  if (countAndamento) countAndamento.textContent = andamento;
+  if (countFechado) countFechado.textContent = fechados;
+  if (countTotal) countTotal.textContent = leads.length;
+
+  var alertCard = document.getElementById('insightLeadAlert');
+  var alertText = document.getElementById('insightLeadText');
+  if (alertCard && alertText) {
+    if (novos > 0) {
+      alertCard.style.display = '';
+      alertCard.className = 'insight-card' + (novos >= 3 ? '' : ' success');
+      alertText.textContent = novos === 1
+        ? 'Você tem 1 lead novo aguardando contato. Responda rápido para não perder!'
+        : 'Você tem ' + novos + ' leads novos aguardando contato. Não perca oportunidades!';
+    } else if (andamento > 0) {
+      alertCard.style.display = '';
+      alertCard.className = 'insight-card success';
+      alertText.textContent = andamento + ' lead(s) em andamento. Acompanhe de perto para fechar!';
+    } else {
+      alertCard.style.display = 'none';
+    }
+  }
+}
 
 function renderLeads() {
   var body = document.getElementById('leadsBody');
   if (!body) return;
-  
+
   var leads = state.leads || [];
+  var filtered = currentLeadFilter === 'todos' ? leads : leads.filter(function(l) {
+    return (l.status || 'novo') === currentLeadFilter;
+  });
+
   body.innerHTML = '';
   var emptyEl = document.getElementById('leadsEmpty');
 
-  if (leads.length === 0) {
+  if (filtered.length === 0) {
     emptyEl.style.display = 'block';
   } else {
     emptyEl.style.display = 'none';
-    leads.forEach(function(l) {
+    filtered.forEach(function(l) {
       var row = document.createElement('tr');
-      // WhatsApp link formatting
       var cleanPhone = (l.whatsapp || '').replace(/\D/g, '');
       var wppUrl = 'https://wa.me/' + cleanPhone;
-      
+      var status = l.status || 'novo';
+
+      var statusColors = { novo: 'var(--sea-foam)', em_andamento: 'var(--sand-gold)', fechado: 'var(--lagoon-green)' };
+      var statusLabels = { novo: 'Novo', em_andamento: 'Em Andamento', fechado: 'Fechado' };
+      var statusIcons = { novo: '🔵', em_andamento: '🟡', fechado: '🟢' };
+
+      var statusSelect =
+        '<select onchange="changeLeadStatus(\'' + l.id + '\', this.value)" style="background:' + statusColors[status] + '; color:#0B1215; border:none; border-radius:6px; padding:4px 8px; font-size:0.75rem; font-weight:700; cursor:pointer;">' +
+          '<option value="novo"' + (status === 'novo' ? ' selected' : '') + '>' + statusIcons.novo + ' Novo</option>' +
+          '<option value="em_andamento"' + (status === 'em_andamento' ? ' selected' : '') + '>' + statusIcons.em_andamento + ' Em Andamento</option>' +
+          '<option value="fechado"' + (status === 'fechado' ? ' selected' : '') + '>' + statusIcons.fechado + ' Fechado</option>' +
+        '</select>';
+
+      var timeSince = '';
+      if (l.created_at) {
+        var diffMs = Date.now() - new Date(l.created_at).getTime();
+        var diffHours = Math.floor(diffMs / 3600000);
+        if (diffHours < 1) timeSince = ' <span style="color:var(--starfish-coral); font-weight:700; font-size:0.7rem">⚡ AGORA</span>';
+        else if (diffHours < 24) timeSince = ' <span style="color:var(--sand-gold); font-size:0.7rem">há ' + diffHours + 'h</span>';
+        else if (diffHours < 48 && status === 'novo') timeSince = ' <span style="color:var(--starfish-coral); font-size:0.7rem">⚠️ +24h sem resposta</span>';
+      }
+
       row.innerHTML =
-        '<td>' + formatDateTime(l.created_at) + '</td>' +
+        '<td>' + formatDateTime(l.created_at) + timeSince + '</td>' +
         '<td><strong>' + sanitize(l.name) + '</strong><br><small style="opacity:0.6">' + sanitize(l.email) + '</small></td>' +
         '<td><a href="' + wppUrl + '" target="_blank" class="val-income" style="font-weight:700">' + sanitize(l.whatsapp) + '</a></td>' +
         '<td>' + sanitize(l.revenue) + '</td>' +
         '<td>' + sanitize(l.focus) + '</td>' +
         '<td><div style="max-width:200px; white-space:normal; font-size:0.8rem">' + sanitize(l.goal) + '</div></td>' +
-        '<td><span class="status-tag status--income">Novo</span></td>' +
-        '<td>' +
-          '<button class="btn-primary btn-sm" onclick="alert(\'Convertendo lead...\')" style="padding:4px 8px; font-size:0.7rem">Converter</button>' +
+        '<td>' + statusSelect + '</td>' +
+        '<td style="white-space:nowrap">' +
+          '<a href="' + wppUrl + '?text=Ol%C3%A1%20' + encodeURIComponent(l.name || '') + '%2C%20recebi%20seu%20diagn%C3%B3stico!" target="_blank" class="btn-primary btn-sm" style="padding:4px 8px; font-size:0.7rem; text-decoration:none; display:inline-block; margin-right:4px">💬 WhatsApp</a>' +
         '</td>';
       body.appendChild(row);
     });
   }
+
+  updateLeadAlerts();
 }
 
 // ============================================================

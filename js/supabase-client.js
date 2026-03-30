@@ -275,6 +275,18 @@ Object.assign(window.db, {
     if (error) { console.error('loadLeads error:', error); return []; }
     return data;
   },
+  async updateLeadStatus(id, status) {
+    if (!window.supabaseClient) return false;
+    const { error } = await window.supabaseClient.from('leads').update({ status: status, updated_at: new Date().toISOString() }).eq('id', id);
+    if (error) console.error('updateLeadStatus error:', error);
+    return !error;
+  },
+  async updateLeadNotes(id, notes) {
+    if (!window.supabaseClient) return false;
+    const { error } = await window.supabaseClient.from('leads').update({ notes: notes, updated_at: new Date().toISOString() }).eq('id', id);
+    if (error) console.error('updateLeadNotes error:', error);
+    return !error;
+  },
   async loadAll() {
     const [tasks, finances, clients, goals, notes, settings, fbadsConfig, fbadsCampaigns, leads] = await Promise.all([
       window.db.loadTasks(), window.db.loadFinances(), window.db.loadClients(), window.db.loadGoals(),

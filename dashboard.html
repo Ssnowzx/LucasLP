@@ -137,6 +137,13 @@
                                     <div class="insight-text" id="insightBoutiqueStatus">Você tem 0 de 10 slots ocupados. Foco em exclusividade.</div>
                                 </div>
                             </div>
+                            <div class="insight-card" id="insightLeadAlert" style="display:none; cursor:pointer;" onclick="navigateTo('leads')">
+                                <div class="insight-icon">🔔</div>
+                                <div class="insight-body">
+                                    <div class="insight-title">Leads Pendentes</div>
+                                    <div class="insight-text" id="insightLeadText">Você tem leads novos aguardando contato. Não perca oportunidades!</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -693,6 +700,32 @@
                             </div>
                         </div>
                         
+                        <div style="display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap;">
+                            <div class="kpi-card" style="flex:1; min-width:120px; text-align:center;">
+                                <div class="kpi-header"><span class="kpi-label">Novos</span></div>
+                                <div class="kpi-value" id="leadsCountNovo" style="color:var(--sea-foam)">0</div>
+                            </div>
+                            <div class="kpi-card" style="flex:1; min-width:120px; text-align:center;">
+                                <div class="kpi-header"><span class="kpi-label">Em Andamento</span></div>
+                                <div class="kpi-value" id="leadsCountAndamento" style="color:var(--sand-gold)">0</div>
+                            </div>
+                            <div class="kpi-card" style="flex:1; min-width:120px; text-align:center;">
+                                <div class="kpi-header"><span class="kpi-label">Fechados</span></div>
+                                <div class="kpi-value" id="leadsCountFechado" style="color:var(--lagoon-green)">0</div>
+                            </div>
+                            <div class="kpi-card" style="flex:1; min-width:120px; text-align:center;">
+                                <div class="kpi-header"><span class="kpi-label">Total</span></div>
+                                <div class="kpi-value" id="leadsCountTotal">0</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom:12px; display:flex; gap:8px; flex-wrap:wrap;">
+                            <button class="btn-primary btn-sm lead-filter-btn active" onclick="filterLeads('todos')" style="font-size:0.75rem">Todos</button>
+                            <button class="btn-primary btn-sm lead-filter-btn" onclick="filterLeads('novo')" style="font-size:0.75rem; background:var(--sea-foam); color:#0B1215">🔵 Novos</button>
+                            <button class="btn-primary btn-sm lead-filter-btn" onclick="filterLeads('em_andamento')" style="font-size:0.75rem; background:var(--sand-gold); color:#0B1215">🟡 Em Andamento</button>
+                            <button class="btn-primary btn-sm lead-filter-btn" onclick="filterLeads('fechado')" style="font-size:0.75rem; background:var(--lagoon-green); color:#0B1215">🟢 Fechados</button>
+                        </div>
+
                         <div class="finance-table-wrapper">
                             <table class="v-table">
                                 <thead>
@@ -703,6 +736,7 @@
                                         <th>Faturamento</th>
                                         <th>Foco</th>
                                         <th>Objetivo</th>
+                                        <th>Status</th>
                                         <th>Ações</th>
                                     </tr>
                                 </thead>
