@@ -257,16 +257,16 @@ Object.assign(window.db, {
   async saveLead(lead) {
     if (!window.supabaseClient) return false;
     const row = {
-      name: lead.name,
-      email: lead.email,
-      whatsapp: lead.whatsapp,
-      revenue: lead.revenue,
-      focus: lead.focus,
-      goal: lead.goal,
+      name: lead.name || '',
+      email: lead.email || '',
+      whatsapp: lead.whatsapp || '',
+      revenue: lead.revenue || '',
+      focus: lead.focus || '',
+      goal: lead.goal || '',
       created_at: new Date().toISOString()
     };
     const { error } = await window.supabaseClient.from('leads').insert([row]);
-    if (error) console.error('saveLead error:', error);
+    if (error) console.error('saveLead error:', error.message, error.details, error.hint, error.code);
     return !error;
   },
   async loadLeads() {

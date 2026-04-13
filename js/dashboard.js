@@ -1440,62 +1440,131 @@ function renderOverviewLeads() {
   });
 }
 
+function parseGoalField(goalStr) {
+  if (!goalStr) return { classif: '', summary: '', details: [] };
+  var parts = goalStr.split(' | ');
+  var classif = '';
+  var summary = '';
+  var details = [];
+
+  parts.forEach(function(p) {
+    var pt = p.trim();
+    if (pt === 'QUENTE' || pt === 'MORNO' || pt === 'FRIO') { classif = pt; return; }
+    if (pt.indexOf('Site:') === 0 || pt.indexOf('IG:') === 0 || pt.indexOf('Marketplace:') === 0 || pt.indexOf('Estrategia:') === 0) {
+      details.push(pt);
+      return;
+    }
+    if (!summary) summary = pt;
+    else details.push(pt);
+  });
+
+  return { classif: classif, summary: summary, details: details };
+}
+
 function renderLeads() {
-  var body = document.getElementById('leadsBody');
-  if (!body) return;
+  var grid = document.getElementById('leadsGrid');
+  if (!grid) return;
 
   var leads = state.leads || [];
   var filtered = currentLeadFilter === 'todos' ? leads : leads.filter(function(l) {
     return (l.status || 'novo') === currentLeadFilter;
   });
 
-  body.innerHTML = '';
+  grid.innerHTML = '';
   var emptyEl = document.getElementById('leadsEmpty');
 
   if (filtered.length === 0) {
-    emptyEl.style.display = 'block';
+    if (emptyEl) emptyEl.style.display = 'block';
   } else {
-    emptyEl.style.display = 'none';
+    if (emptyEl) emptyEl.style.display = 'none';
     filtered.forEach(function(l) {
-      var row = document.createElement('tr');
       var cleanPhone = (l.whatsapp || '').replace(/\D/g, '');
       var wppUrl = 'https://wa.me/' + cleanPhone;
       var status = l.status || 'novo';
       var info = LEAD_STATUSES[status] || LEAD_STATUSES.novo;
+      var parsed = parseGoalField(l.goal);
 
+      // Classification badge
+      var classifBadge = '';
+      if (parsed.classif === 'QUENTE') classifBadge = '<span style="background:#EF4444; color:#fff; padding:1px 6px; border-radius:4px; font-size:0.6rem; font-weight:700;">QUENTE</span>';
+      else if (parsed.classif === 'MORNO') classifBadge = '<span style="background:#F59E0B; color:#0B1215; padding:1px 6px; border-radius:4px; font-size:0.6rem; font-weight:700;">MORNO</span>';
+      else if (parsed.classif === 'FRIO') classifBadge = '<span style="background:#3B82F6; color:#fff; padding:1px 6px; border-radius:4px; font-size:0.6rem; font-weight:700;">FRIO</span>';
+
+      // Status select
       var statusSelect =
-        '<select onchange="changeLeadStatus(\'' + l.id + '\', this.value)" style="background:' + info.color + '; color:#0B1215; border:none; border-radius:6px; padding:4px 8px; font-size:0.75rem; font-weight:700; cursor:pointer;">' +
+        '<select onchange="changeLeadStatus(\'' + l.id + '\', this.value)" style="background:' + info.color + '; color:#0B1215; border:none; border-radius:5px; padding:3px 6px; font-size:0.68rem; font-weight:700; cursor:pointer; width:100%;">' +
           Object.keys(LEAD_STATUSES).map(function(key) {
             return '<option value="' + key + '"' + (key === status ? ' selected' : '') + '>' + LEAD_STATUSES[key].icon + ' ' + LEAD_STATUSES[key].label + '</option>';
           }).join('') +
         '</select>';
 
-      var timeSince = '';
-      if (l.created_at) {
-        var diffMs = Date.now() - new Date(l.created_at).getTime();
-        var diffHours = Math.floor(diffMs / 3600000);
-        if (diffHours < 1) timeSince = ' <span style="color:var(--starfish-coral); font-weight:700; font-size:0.7rem">⚡ AGORA</span>';
-        else if (diffHours < 24) timeSince = ' <span style="color:var(--sand-gold); font-size:0.7rem">ha ' + diffHours + 'h</span>';
-        else if (diffHours >= 24 && (status === 'novo' || status === 'sem_resposta')) timeSince = ' <span style="color:var(--starfish-coral); font-size:0.7rem">⚠️ +' + Math.floor(diffHours / 24) + 'd sem resposta</span>';
+      // Parse details into structured items
+      var detailsHtml = '';
+      parsed.details.forEach(function(d) {
+        var label = '';
+        var value = d;
+        if (d.indexOf('Site:') === 0) { label = 'Site'; value = d.substring(5).trim(); }
+        else if (d.indexOf('IG:') === 0) { label = 'Instagram'; value = d.substring(3).trim(); }
+        else if (d.indexOf('Marketplace:') === 0) { label = 'Marketplace'; value = d.substring(12).trim(); }
+        else if (d.indexOf('Estrategia:') === 0) { label = 'Abordagem'; value = d.substring(11).trim(); }
+        if (label) {
+          detailsHtml += '<div style="font-size:0.7rem; line-height:1.3; margin-top:3px;"><span style="opacity:0.5;">' + label + ':</span> ' + sanitize(value) + '</div>';
+        }
+      });
+
+      var card = document.createElement('div');
+      card.style.cssText = 'background:var(--ocean-surface); border-radius:12px; padding:14px 16px; border-left:4px solid ' + info.color + '; transition:transform 0.15s;';
+
+      // Header: name + badge + porte
+      var headerHtml =
+        '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">' +
+          '<div style="display:flex; align-items:center; gap:6px; min-width:0;">' +
+            '<strong style="font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + sanitize(l.name) + '</strong>' +
+            classifBadge +
+          '</div>' +
+          '<span style="font-size:0.65rem; opacity:0.5; flex-shrink:0;">' + sanitize(l.revenue || '') + '</span>' +
+        '</div>';
+
+      // Info row: segmento + telefone
+      var infoHtml =
+        '<div style="display:flex; align-items:center; gap:12px; margin-bottom:8px; font-size:0.75rem;">' +
+          '<span style="opacity:0.7;">' + sanitize(l.focus || '') + '</span>' +
+          (cleanPhone ? '<a href="' + wppUrl + '" target="_blank" style="color:var(--sea-foam); font-weight:600; text-decoration:none;">' + sanitize(l.whatsapp) + '</a>' : '<span style="opacity:0.4;">Sem telefone</span>') +
+        '</div>';
+
+      // Summary (1 line)
+      var summaryHtml = parsed.summary
+        ? '<div style="font-size:0.73rem; opacity:0.85; margin-bottom:8px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">' + sanitize(parsed.summary) + '</div>'
+        : '';
+
+      // Expandable details
+      var expandId = 'ld-' + (l.id || Math.random().toString(36).slice(2));
+      var expandHtml = '';
+      if (detailsHtml) {
+        expandHtml =
+          '<div id="' + expandId + '" style="display:none; padding-top:6px; border-top:1px solid rgba(255,255,255,0.06); margin-bottom:6px;">' +
+            detailsHtml +
+          '</div>' +
+          '<button onclick="var e=document.getElementById(\'' + expandId + '\');var s=e.style.display===\'none\';e.style.display=s?\'block\':\'none\';this.textContent=s?\'Menos\':\'Detalhes\'" style="background:none; border:none; color:var(--sea-foam); font-size:0.65rem; cursor:pointer; padding:0; margin-bottom:8px; opacity:0.8;">Detalhes</button>';
       }
 
-      var lostInfo = '';
+      // Lost reason
+      var lostHtml = '';
       if (status === 'perdido' && l.lost_reason) {
-        lostInfo = '<br><small style="color:var(--starfish-coral); font-size:0.7rem;">Motivo: ' + sanitize(l.lost_reason) + '</small>';
+        lostHtml = '<div style="font-size:0.68rem; color:var(--starfish-coral); margin-bottom:6px;">Motivo: ' + sanitize(l.lost_reason) + '</div>';
       }
 
-      row.innerHTML =
-        '<td>' + formatDateTime(l.created_at) + timeSince + '</td>' +
-        '<td><strong>' + sanitize(l.name) + '</strong><br><small style="opacity:0.6">' + sanitize(l.email) + '</small>' + lostInfo + '</td>' +
-        '<td><a href="' + wppUrl + '" target="_blank" class="val-income" style="font-weight:700">' + sanitize(l.whatsapp) + '</a></td>' +
-        '<td>' + sanitize(l.revenue) + '</td>' +
-        '<td>' + sanitize(l.focus) + '</td>' +
-        '<td><div style="max-width:200px; white-space:normal; font-size:0.8rem">' + sanitize(l.goal) + '</div></td>' +
-        '<td>' + statusSelect + '</td>' +
-        '<td style="white-space:nowrap">' +
-          '<a href="' + wppUrl + '?text=Ol%C3%A1%20' + encodeURIComponent(l.name || '') + '%2C%20recebi%20seu%20diagn%C3%B3stico!" target="_blank" class="btn-primary btn-sm" style="padding:4px 8px; font-size:0.7rem; text-decoration:none; display:inline-block;">💬 WhatsApp</a>' +
-        '</td>';
-      body.appendChild(row);
+      // Footer: status + WhatsApp button
+      var footerHtml =
+        '<div style="display:flex; align-items:center; gap:8px;">' +
+          '<div style="flex:1;">' + statusSelect + '</div>' +
+          (cleanPhone
+            ? '<a href="' + wppUrl + '?text=Ol%C3%A1%20' + encodeURIComponent(l.name || '') + '%2C%20tudo%20bem%3F" target="_blank" style="background:var(--lagoon-green); color:#0B1215; border:none; border-radius:6px; padding:5px 12px; font-size:0.7rem; font-weight:700; text-decoration:none; flex-shrink:0;">WhatsApp</a>'
+            : '') +
+        '</div>';
+
+      card.innerHTML = headerHtml + infoHtml + summaryHtml + expandHtml + lostHtml + footerHtml;
+      grid.appendChild(card);
     });
   }
 
