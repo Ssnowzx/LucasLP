@@ -1266,13 +1266,18 @@ function countByStatus(leads, status) {
   return leads.filter(function(l) { return (l.status || 'novo') === status; }).length;
 }
 
-window.loadDashboardLeads = function() {
+window.loadDashboardLeads = function(btnEl) {
   if (!window.db.loadLeads) return;
+  var btn = btnEl || document.querySelector('[onclick="loadDashboardLeads()"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Atualizando...'; }
   window.db.loadLeads().then(function(leads) {
     state.leads = leads;
     renderLeads();
     updateLeadAlerts();
     renderOverviewLeads();
+    if (btn) { btn.disabled = false; btn.textContent = 'Atualizar'; }
+  }).catch(function() {
+    if (btn) { btn.disabled = false; btn.textContent = 'Atualizar'; }
   });
 };
 
