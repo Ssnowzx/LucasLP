@@ -742,25 +742,29 @@ body {
 }
 
 .help-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  background: transparent;
-  border: 1px solid var(--ocean-border-light);
-  border-radius: 50%;
-  color: var(--deep-muted);
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  background: rgba(125, 211, 252, 0.08);
+  border: 1px solid rgba(125, 211, 252, 0.22);
+  border-radius: 20px;
+  color: var(--sea-foam);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
   cursor: pointer;
   transition: all var(--transition);
   flex-shrink: 0;
-  padding: 0;
+  white-space: nowrap;
 }
+.help-btn span { line-height: 1; }
 .help-btn:hover,
 .help-btn.active {
-  background: var(--sea-foam-glow);
-  border-color: var(--sea-foam);
-  color: var(--sea-foam);
+  background: rgba(125, 211, 252, 0.16);
+  border-color: rgba(125, 211, 252, 0.5);
+  box-shadow: 0 0 10px rgba(125, 211, 252, 0.15);
 }
 
 .help-popover {

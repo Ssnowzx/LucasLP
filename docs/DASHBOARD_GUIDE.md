@@ -34,6 +34,7 @@ Seu **centro de comando centralizado** para gestão do negócio boutique. Substi
 - **Desktop/Tablet:** Use o menu lateral expansível
 - **Mobile:** Clique no ☰ no canto superior esquerdo para abrir/fechar o menu
 - **Minimizar sidebar:** Clique no ⊟ (hamburguinho) ao lado da logo
+- **Dicas de cada seção:** Clique no chip **✦ Dicas** ao lado do título para ver dicas contextuais da página
 
 ### 3. Primeiros Passos Recomendados
 1. **Configure suas metas** (📊 Dashboard → Seção "Metas")

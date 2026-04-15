@@ -146,6 +146,32 @@ Logo Text: 0.9rem, 700, Space Grotesk
 <button class="btn-danger">Excluir</button>
 ```
 
+#### Help Chip (Dicas)
+- **Uso:** Botão de ajuda contextual ao lado dos títulos de seção. Exibe um popover com dicas ao ser clicado.
+- **Shape:** Pill (border-radius 20px)
+- **Bg:** `rgba(125, 211, 252, 0.08)` — glow sutil cyan
+- **Border:** `1px solid rgba(125, 211, 252, 0.22)`
+- **Color:** `var(--sea-foam)` — sempre visível, sem precisar de hover
+- **Hover/Active:** Glow aumenta + box-shadow cyan sutil
+- **Ícone:** Sparkle 4-pontas (SVG fill, 11×11px)
+- **Texto:** "Dicas" — `0.7rem, 600, DM Sans`
+
+```html
+<button class="help-btn" onclick="toggleHelp('help-id')" title="Dicas desta página">
+  <svg viewBox="0 0 16 16" width="11" height="11" fill="currentColor" aria-hidden="true">
+    <path d="M8 0.5L10.5 5.5L15.5 8L10.5 10.5L8 15.5L5.5 10.5L0.5 8L5.5 5.5Z"/>
+  </svg>
+  <span>Dicas</span>
+</button>
+```
+
+**Popover associado (`.help-popover`):**
+- Aparece abaixo do botão com animação `help-pop`
+- Largura: 300px
+- Título em sea-foam, lista com bullets `›`
+- Fecha ao clicar fora ou ao abrir outro popover
+- Auto-alinhamento: inverte para direita se perto da borda
+
 ### Cards
 
 #### Funil & Operação Card (v2.1)
