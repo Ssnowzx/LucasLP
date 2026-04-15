@@ -1636,6 +1636,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       renderAll();
+      document.documentElement.style.visibility = 'visible';
 
       // Restore sidebar state
       if (state.settings.sidebarMinimized) {
@@ -1658,6 +1659,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }).catch(function(err) {
       console.error('Data load error:', err);
+      document.documentElement.style.visibility = 'visible';
     });
   }
 

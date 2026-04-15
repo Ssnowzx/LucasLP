@@ -41,7 +41,7 @@ if (!window.supabaseClient) {
       window.authUserName = (res.data.session.user.user_metadata && res.data.session.user.user_metadata.name) || 'Lucas';
     }
     
-    document.documentElement.style.visibility = 'visible';
+    // Visibility is set by dashboard.js after page restore to avoid flash
     return res.data.session;
   }).catch(function(err) {
     document.documentElement.style.visibility = 'visible';
