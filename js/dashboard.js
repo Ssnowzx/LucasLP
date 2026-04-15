@@ -1619,14 +1619,23 @@ document.addEventListener('DOMContentLoaded', function() {
       initFbCharts();
       updateFbConfigStatus();
       loadDashboardLeads();
-      renderAll();
 
-      // Restore last visited page
+      // Restore last visited page before first render to avoid flash
       var savedPage = localStorage.getItem('lastPage');
       var validPages = ['overview', 'kanban', 'finance', 'pipeline', 'goals', 'notes', 'fbads', 'leads'];
-      if (savedPage && validPages.includes(savedPage) && savedPage !== 'overview') {
-        navigateTo(savedPage);
+      if (savedPage && validPages.includes(savedPage)) {
+        currentPage = savedPage;
+        document.querySelectorAll('.page-view').forEach(function(p) { p.classList.remove('active'); });
+        var page = document.getElementById('page-' + savedPage);
+        if (page) page.classList.add('active');
+        document.querySelectorAll('.menu-item').forEach(function(m) { m.classList.remove('active'); });
+        var activeItem = document.querySelector('.menu-item[data-page="' + savedPage + '"]');
+        if (activeItem) activeItem.classList.add('active');
+        var labels = { overview:'Dashboard', kanban:'Kanban', finance:'Financeiro', pipeline:'Pipeline', goals:'Metas', notes:'Notas', fbads:'Facebook Ads', leads:'Leads (Diagnósticos)' };
+        document.getElementById('pageBreadcrumb').textContent = labels[savedPage] || savedPage;
       }
+
+      renderAll();
 
       // Restore sidebar state
       if (state.settings.sidebarMinimized) {
