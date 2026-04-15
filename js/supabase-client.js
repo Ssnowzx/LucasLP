@@ -93,7 +93,10 @@ Object.assign(window.db, {
       col: t.col || 'backlog', created_at: t.createdAt, updated_at: t.updatedAt || new Date().toISOString()
     }));
     const { error } = await window.supabaseClient.from('tasks').upsert(rows, { onConflict: 'id' });
-    if (error) console.error('saveTasks:', error);
+    if (error) {
+      console.error('saveTasks error — col values being sent:', rows.map(r => r.col));
+      console.error('saveTasks:', error.message, error.details, error.hint);
+    }
   },
   async deleteTask(id) {
     if (!window.supabaseClient) return;
