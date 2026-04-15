@@ -36,6 +36,7 @@
                 <a href="#" class="menu-item" data-page="kanban" onclick="navigateTo('kanban', event)">
                     <span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="8" height="20" rx="1"/><rect x="13" y="2" width="8" height="20" rx="1"/></svg></span>
                     <span class="menu-label">Kanban</span>
+                    <span class="menu-badge" id="badgeKanban" style="display:none">0</span>
                 </a>
                 <a href="#" class="menu-item" data-page="finance" onclick="navigateTo('finance', event)">
                     <span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 11h6"/></svg></span>
@@ -60,6 +61,7 @@
                 <a href="#" class="menu-item" data-page="leads" onclick="navigateTo('leads', event)">
                     <span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
                     <span class="menu-label">Leads (Diagnósticos)</span>
+                    <span class="menu-badge" id="badgeLeads" style="display:none">0</span>
                 </a>
             </nav>
 
@@ -93,6 +95,13 @@
                         <button class="btn-primary btn-sm" onclick="openModal('modalFinance')" title="Nova Transação">+ Transação</button>
                         <button class="btn-primary btn-sm" onclick="openModal('modalClient')" title="Novo Cliente">+ Cliente</button>
                     </div>
+                    <button class="notif-bell-btn" id="notifBell" onclick="toggleNotifPanel()" title="Alertas e Notificações">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+                    </button>
                     <span class="header-greeting" id="headerGreeting">Bom dia</span>
                 </div>
             </header>
@@ -1105,6 +1114,51 @@
             </div>
         </div>
     </div>
+
+    <!-- NOTIFICATION PANEL OVERLAY -->
+    <div class="notif-overlay" id="notifOverlay" onclick="closeNotifPanel()"></div>
+
+    <!-- NOTIFICATION PANEL -->
+    <div class="notif-panel" id="notifPanel">
+        <div class="notif-panel-header">
+            <h3 class="notif-panel-title">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                Alertas
+            </h3>
+            <div class="notif-panel-actions">
+                <button class="notif-mark-all-btn" onclick="markAllAlertsRead()" title="Marcar tudo como lido">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    Tudo lido
+                </button>
+                <button class="notif-close-btn" onclick="closeNotifPanel()" title="Fechar">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="notif-tabs" id="notifTabs">
+            <button class="notif-tab active" data-tab="all" onclick="switchNotifTab('all', this)">Todos</button>
+            <button class="notif-tab" data-tab="unread" onclick="switchNotifTab('unread', this)">Não lidos</button>
+        </div>
+        <div class="notif-list" id="notifList">
+            <div class="notif-empty">
+                <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                <p>Nenhum alerta no momento</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

@@ -1,7 +1,7 @@
 # 📊 Guia de Uso — Vantage Command Dashboard
 
-**Versão:** 2.0
-**Última atualização:** Março 2026
+**Versão:** 2.1
+**Última atualização:** Abril 2026
 **Para:** Lucas & Rodrigo
 
 ---
@@ -18,6 +18,7 @@ Seu **centro de comando centralizado** para gestão do negócio boutique. Substi
 - 🏆 Acompanhar metas mensais com progresso visual
 - 💬 Compartilhar notas rápidas entre Lucas e Rodrigo
 - 📢 Monitorar campanhas do Facebook Ads com KPIs dedicados
+- 🔔 Receber alertas automáticos sobre tarefas, leads, metas e finanças
 
 ---
 
@@ -772,6 +773,57 @@ Sprint 3 (Junho 2026):
 
 ---
 
+## 🔔 Sistema de Alertas & Notificações
+
+O dashboard monitora seus dados automaticamente e avisa Lucas e Rodrigo sobre o que precisa de atenção — sem precisar ficar verificando cada seção manualmente.
+
+### Como funciona
+
+**Sininho (🔔) no canto superior direito do header:**
+- Badge vermelho com número de alertas não lidos
+- Animação de "toque" quando há pendências
+- Clique para abrir o painel de notificações
+
+**Painel lateral de Alertas:**
+- Desliza da direita ao clicar no sininho
+- Aba **Todos** — todos os alertas ativos no momento
+- Aba **Não lidos** — filtra só os que ainda não foram vistos
+- Botão **"Tudo lido"** — zera o contador de uma vez
+- Clicar em qualquer alerta navega direto para a página correspondente e marca como lido
+
+**Badges no menu lateral:**
+- **Kanban** — mostra quantas tarefas estão atrasadas ou vencem hoje
+- **Leads** — mostra quantos leads aguardam contato
+
+**Toasts (notificações temporárias):**
+- Aparecem no canto inferior direito por 6 segundos
+- Acionados automaticamente quando surgem alertas urgentes novos
+- Clique no toast navega direto para a página do problema
+
+### Alertas gerados automaticamente
+
+| Ícone | Alerta | Quando aparece | Prioridade |
+|-------|--------|---------------|-----------|
+| ⏰ | **Tarefa Atrasada** | Tarefa com deadline passado e não concluída | 🔴 Urgente |
+| 📅 | **Vence Hoje** | Tarefa com deadline hoje e não concluída | 🟡 Aviso |
+| 👥 | **Leads Aguardando** | Leads com status novo/pendente sem contato | 🟡 Aviso |
+| 🎯 | **Meta Atrasada** | Meta com deadline passado e não atingida | 🔴 Urgente |
+| 🎯 | **Meta Se Aproximando** | Meta vence em ≤ 7 dias e não atingida | 🟡 Aviso |
+| 💸 | **Saldo Negativo** | Despesas > Receitas no mês atual | 🔴 Urgente |
+| 📊 | **Pipeline Parado** | Cliente sem avançar de estágio há mais de 14 dias | 🔵 Info |
+
+### Marcar como lido
+
+- **Um alerta:** clique no ✓ que aparece ao passar o mouse sobre o item
+- **Todos de uma vez:** botão "Tudo lido" no topo do painel
+- O estado de leitura é salvo no navegador (independente por dispositivo)
+
+### Dica de uso
+
+> Use os badges do sidebar como "check rápido": se Kanban ou Leads mostrarem um número, é sinal de que há algo que precisa de atenção antes de abrir qualquer outra seção.
+
+---
+
 **Mantido por:** Squad Poseidon
-**Última revisão:** 27 de Março de 2026 às 17:50
-**Versão:** 2.2 (Sidebar + 7 Páginas + Facebook Ads + Boutique Sync 10 Slots)
+**Última revisão:** 15 de Abril de 2026
+**Versão:** 2.1 (Sistema de Alertas & Notificações)
