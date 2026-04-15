@@ -135,12 +135,47 @@ function updateGreeting() {
 }
 
 // ============================================================
-//  TIPS CONTROL
+//  HELP POPOVER
 // ============================================================
-window.toggleTips = function(btn) {
-  var tips = btn.closest('.intro-tips');
-  tips.classList.toggle('minimized');
+window.toggleHelp = function(id) {
+  var popover = document.getElementById(id);
+  if (!popover) return;
+
+  var isOpen = popover.classList.contains('open');
+
+  // Fecha todos os outros
+  document.querySelectorAll('.help-popover.open').forEach(function(p) {
+    p.classList.remove('open');
+    var btn = p.closest('.help-wrap') && p.closest('.help-wrap').querySelector('.help-btn');
+    if (btn) btn.classList.remove('active');
+  });
+
+  if (!isOpen) {
+    popover.classList.add('open');
+    var btn = popover.closest('.help-wrap') && popover.closest('.help-wrap').querySelector('.help-btn');
+    if (btn) btn.classList.add('active');
+
+    // Detecta se está perto da borda direita e inverte alinhamento
+    var rect = popover.getBoundingClientRect();
+    if (rect.right > window.innerWidth - 16) {
+      popover.classList.add('align-right');
+    } else {
+      popover.classList.remove('align-right');
+    }
+  }
 };
+
+// Fecha popovers ao clicar fora
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.help-wrap')) {
+    document.querySelectorAll('.help-popover.open').forEach(function(p) {
+      p.classList.remove('open');
+    });
+    document.querySelectorAll('.help-btn.active').forEach(function(b) {
+      b.classList.remove('active');
+    });
+  }
+});
 
 // ============================================================
 //  MODAL CONTROL
