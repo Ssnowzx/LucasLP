@@ -64,6 +64,29 @@ As credenciais do Supabase estao configuradas diretamente em `js/supabase-client
 | Facebook Ads | Monitoramento de campanhas Meta |
 | Leads | Gestao de leads prospectados e capturados pela LP |
 
+## Sistema de Alertas
+
+O dashboard possui um sistema de alertas integrado para que Lucas e Rodrigo nunca percam eventos criticos:
+
+- **Sininho no header:** badge vermelho com contador de alertas nao lidos; animacao ao ter pendencias
+- **Painel lateral de notificacoes:** abre ao clicar no sininho; abas "Todos" e "Nao lidos"; navegacao direta para a pagina do alerta ao clicar
+- **Badges no sidebar:** Kanban e Leads exibem contadores de itens que precisam de atencao
+- **Toasts:** popups temporarios (6s) no canto inferior direito para alertas urgentes novos
+
+### Alertas gerados automaticamente
+
+| Tipo | Condicao | Prioridade |
+|------|----------|-----------|
+| Tarefa Atrasada | Tarefa com deadline no passado e nao concluida | Urgente |
+| Vence Hoje | Tarefa com deadline hoje e nao concluida | Aviso |
+| Leads Aguardando | Leads com status novo/pendente sem contato | Aviso |
+| Meta Atrasada | Meta com deadline no passado e nao concluida | Urgente |
+| Meta Se Aproximando | Meta vence em <= 7 dias e nao concluida | Urgente/Aviso |
+| Saldo Negativo | Despesas > Receitas no mes atual | Urgente |
+| Pipeline Parado | Cliente sem avancar de stage ha +14 dias | Info |
+
+O estado de leitura dos alertas e salvo em `localStorage` por usuario/navegador.
+
 ## Importacao de Leads
 
 O dashboard suporta importacao de leads a partir de planilhas Google Sheets exportadas como HTML:

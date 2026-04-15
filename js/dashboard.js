@@ -1578,6 +1578,354 @@ function renderLeads() {
 }
 
 // ============================================================
+//  SISTEMA DE ALERTAS & NOTIFICAÇÕES
+// ============================================================
+
+var _alertReadState = {};
+var _notifTab = 'all';
+var _notifPanelOpen = false;
+var _lastAlertCount = 0;
+
+function loadAlertReadState() {
+  try {
+    _alertReadState = JSON.parse(localStorage.getItem('alertReadState') || '{}');
+  } catch (e) {
+    _alertReadState = {};
+  }
+}
+
+function saveAlertReadState() {
+  localStorage.setItem('alertReadState', JSON.stringify(_alertReadState));
+}
+
+function generateAlerts() {
+  var alerts = [];
+  var now = new Date();
+  var todayStr = now.toISOString().split('T')[0];
+
+  // 1. Tarefas atrasadas
+  state.tasks.forEach(function(task) {
+    if (task.deadline && task.status !== 'done') {
+      var deadline = new Date(task.deadline + 'T23:59:59');
+      if (deadline < now) {
+        alerts.push({
+          id: 'task_overdue_' + task.id,
+          type: 'urgent',
+          icon: '⏰',
+          title: 'Tarefa Atrasada',
+          message: '"' + task.title + '" venceu em ' + formatDate(task.deadline),
+          page: 'kanban',
+          pageLabel: 'Kanban'
+        });
+      }
+    }
+  });
+
+  // 2. Tarefas que vencem hoje
+  state.tasks.forEach(function(task) {
+    if (task.deadline && task.status !== 'done' && task.deadline === todayStr) {
+      alerts.push({
+        id: 'task_today_' + task.id,
+        type: 'warning',
+        icon: '📅',
+        title: 'Vence Hoje',
+        message: '"' + task.title + '" deve ser concluída hoje',
+        page: 'kanban',
+        pageLabel: 'Kanban'
+      });
+    }
+  });
+
+  // 3. Leads pendentes aguardando contato
+  var pendingLeads = [];
+  if (state.leads && state.leads.length > 0) {
+    pendingLeads = state.leads.filter(function(l) {
+      var s = (l.status || '').toLowerCase();
+      return s === 'novo' || s === 'pendente' || s === 'aguardando';
+    });
+  }
+  if (pendingLeads.length > 0) {
+    alerts.push({
+      id: 'leads_pending',
+      type: 'warning',
+      icon: '👥',
+      title: 'Leads Aguardando',
+      message: pendingLeads.length + ' lead(s) aguardando primeiro contato. Não perca oportunidades!',
+      page: 'leads',
+      pageLabel: 'Leads'
+    });
+  }
+
+  // 4. Metas próximas do prazo (≤ 7 dias) ou atrasadas
+  state.goals.forEach(function(goal) {
+    if (goal.deadline) {
+      var gDeadline = new Date(goal.deadline + 'T23:59:59');
+      var diffDays = Math.ceil((gDeadline - now) / (1000 * 60 * 60 * 24));
+      var progress = (goal.target && goal.target > 0) ? ((goal.current || 0) / goal.target) * 100 : 0;
+      if (progress < 100) {
+        if (diffDays < 0) {
+          alerts.push({
+            id: 'goal_overdue_' + goal.id,
+            type: 'urgent',
+            icon: '🎯',
+            title: 'Meta Atrasada',
+            message: '"' + goal.title + '" venceu e está em ' + Math.round(progress) + '% — precisa de atenção!',
+            page: 'goals',
+            pageLabel: 'Metas'
+          });
+        } else if (diffDays <= 7) {
+          alerts.push({
+            id: 'goal_deadline_' + goal.id,
+            type: diffDays <= 2 ? 'urgent' : 'warning',
+            icon: '🎯',
+            title: 'Meta Se Aproximando',
+            message: '"' + goal.title + '" vence em ' + diffDays + ' dia(s) — ' + Math.round(progress) + '% concluída',
+            page: 'goals',
+            pageLabel: 'Metas'
+          });
+        }
+      }
+    }
+  });
+
+  // 5. Saldo negativo no mês
+  var cm = now.getMonth();
+  var cy = now.getFullYear();
+  var mFin = state.finances.filter(function(f) {
+    var d = new Date(f.date);
+    return d.getMonth() === cm && d.getFullYear() === cy;
+  });
+  var mIncome = mFin.filter(function(f) { return f.type === 'income'; }).reduce(function(s, f) { return s + f.val; }, 0);
+  var mExpense = mFin.filter(function(f) { return f.type === 'expense'; }).reduce(function(s, f) { return s + f.val; }, 0);
+  if (mExpense > mIncome && (mIncome > 0 || mExpense > 0)) {
+    alerts.push({
+      id: 'finance_negative_' + cy + '_' + cm,
+      type: 'urgent',
+      icon: '💸',
+      title: 'Saldo Negativo Este Mês',
+      message: 'Despesas (' + money(mExpense) + ') superam receitas (' + money(mIncome) + ')',
+      page: 'finance',
+      pageLabel: 'Financeiro'
+    });
+  }
+
+  // 6. Pipeline: clientes há muito tempo sem avançar de stage
+  var stageOrder = ['lead', 'contact', 'proposal', 'negotiation', 'active'];
+  state.clients.forEach(function(client) {
+    if (client.stage && client.stage !== 'active' && client.stage !== 'lost' && client.updatedAt) {
+      var updatedAt = new Date(client.updatedAt);
+      var daysSince = Math.ceil((now - updatedAt) / (1000 * 60 * 60 * 24));
+      if (daysSince >= 14) {
+        alerts.push({
+          id: 'pipeline_stale_' + client.id,
+          type: 'info',
+          icon: '📊',
+          title: 'Pipeline Parado',
+          message: '"' + client.name + '" está em ' + (client.stage || 'estágio') + ' há ' + daysSince + ' dias sem atualização',
+          page: 'pipeline',
+          pageLabel: 'Pipeline'
+        });
+      }
+    }
+  });
+
+  return alerts;
+}
+
+function updateAlerts() {
+  loadAlertReadState();
+  var alerts = generateAlerts();
+  var unreadCount = alerts.filter(function(a) { return !_alertReadState[a.id]; }).length;
+
+  updateNotifBadge(unreadCount);
+  updateSidebarBadges(alerts);
+
+  // Exibe toast se surgiram novos alertas urgentes desde a última vez
+  if (unreadCount > _lastAlertCount && _lastAlertCount >= 0) {
+    var newUrgent = alerts.filter(function(a) {
+      return !_alertReadState[a.id] && (a.type === 'urgent');
+    });
+    if (newUrgent.length > 0 && _lastAlertCount >= 0) {
+      var toShow = newUrgent[0];
+      showToast(toShow.title, toShow.message, toShow.type, toShow.page);
+    }
+  }
+  _lastAlertCount = unreadCount;
+
+  if (_notifPanelOpen) renderNotifList(alerts);
+}
+
+function updateNotifBadge(count) {
+  var badge = document.getElementById('notifBadge');
+  var bell = document.getElementById('notifBell');
+  if (!badge || !bell) return;
+  if (count > 0) {
+    badge.textContent = count > 99 ? '99+' : count;
+    badge.style.display = 'flex';
+    bell.classList.add('has-unread');
+  } else {
+    badge.style.display = 'none';
+    bell.classList.remove('has-unread');
+  }
+}
+
+function updateSidebarBadges(alerts) {
+  // Kanban: tarefas atrasadas + que vencem hoje
+  var kanbanAlerts = alerts.filter(function(a) {
+    return a.page === 'kanban' && !_alertReadState[a.id];
+  });
+  var badgeKanban = document.getElementById('badgeKanban');
+  if (badgeKanban) {
+    if (kanbanAlerts.length > 0) {
+      badgeKanban.textContent = kanbanAlerts.length;
+      badgeKanban.style.display = 'flex';
+    } else {
+      badgeKanban.style.display = 'none';
+    }
+  }
+
+  // Leads: leads pendentes
+  var leadsAlerts = alerts.filter(function(a) {
+    return a.page === 'leads' && !_alertReadState[a.id];
+  });
+  var badgeLeads = document.getElementById('badgeLeads');
+  if (badgeLeads) {
+    if (leadsAlerts.length > 0) {
+      badgeLeads.textContent = leadsAlerts.length;
+      badgeLeads.style.display = 'flex';
+    } else {
+      badgeLeads.style.display = 'none';
+    }
+  }
+}
+
+function renderNotifList(alerts) {
+  var list = document.getElementById('notifList');
+  if (!list) return;
+
+  var filtered = _notifTab === 'unread'
+    ? alerts.filter(function(a) { return !_alertReadState[a.id]; })
+    : alerts;
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="notif-empty"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><p>' + (_notifTab === 'unread' ? 'Todos os alertas foram lidos' : 'Nenhum alerta no momento') + '</p></div>';
+    return;
+  }
+
+  var pageLabels = { kanban: 'Kanban', finance: 'Financeiro', pipeline: 'Pipeline', goals: 'Metas', leads: 'Leads', overview: 'Dashboard' };
+  list.innerHTML = filtered.map(function(alert) {
+    var isUnread = !_alertReadState[alert.id];
+    return '<div class="notif-item ' + (isUnread ? 'unread ' : '') + 'type-' + alert.type + '" onclick="notifItemClick(\'' + alert.id + '\', \'' + alert.page + '\')">' +
+      '<div class="notif-item-icon">' + alert.icon + '</div>' +
+      '<div class="notif-item-body">' +
+        '<div class="notif-item-title">' + (isUnread ? '<span class="notif-dot"></span>' : '') + sanitize(alert.title) + '</div>' +
+        '<div class="notif-item-msg">' + sanitize(alert.message) + '</div>' +
+        '<div class="notif-item-footer">' +
+          '<span class="notif-item-page">' + (alert.pageLabel || pageLabels[alert.page] || alert.page) + '</span>' +
+          '<span class="notif-item-action">Ver →</span>' +
+        '</div>' +
+      '</div>' +
+      '<button class="notif-item-read-btn" onclick="event.stopPropagation(); markAlertRead(\'' + alert.id + '\')" title="' + (isUnread ? 'Marcar como lido' : 'Já lido') + '">' +
+        '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' +
+      '</button>' +
+    '</div>';
+  }).join('');
+}
+
+window.toggleNotifPanel = function() {
+  if (_notifPanelOpen) {
+    closeNotifPanel();
+  } else {
+    openNotifPanel();
+  }
+};
+
+window.openNotifPanel = function() {
+  var panel = document.getElementById('notifPanel');
+  var overlay = document.getElementById('notifOverlay');
+  if (!panel || !overlay) return;
+  panel.classList.add('active');
+  overlay.classList.add('active');
+  _notifPanelOpen = true;
+  var alerts = generateAlerts();
+  renderNotifList(alerts);
+};
+
+window.closeNotifPanel = function() {
+  var panel = document.getElementById('notifPanel');
+  var overlay = document.getElementById('notifOverlay');
+  if (!panel || !overlay) return;
+  panel.classList.remove('active');
+  overlay.classList.remove('active');
+  _notifPanelOpen = false;
+};
+
+window.switchNotifTab = function(tab, btn) {
+  _notifTab = tab;
+  document.querySelectorAll('.notif-tab').forEach(function(t) { t.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  var alerts = generateAlerts();
+  renderNotifList(alerts);
+};
+
+window.markAlertRead = function(id) {
+  _alertReadState[id] = true;
+  saveAlertReadState();
+  updateAlerts();
+};
+
+window.markAllAlertsRead = function() {
+  var alerts = generateAlerts();
+  alerts.forEach(function(a) { _alertReadState[a.id] = true; });
+  saveAlertReadState();
+  updateAlerts();
+};
+
+window.notifItemClick = function(id, page) {
+  markAlertRead(id);
+  closeNotifPanel();
+  navigateTo(page);
+};
+
+function showToast(title, message, type, page) {
+  var container = document.getElementById('toastContainer');
+  if (!container) return;
+  var id = 'toast_' + Date.now();
+  var typeClass = 'type-' + (type || 'info');
+  var icons = { urgent: '🚨', warning: '⚠️', info: 'ℹ️', success: '✅' };
+  var icon = icons[type] || 'ℹ️';
+
+  var el = document.createElement('div');
+  el.className = 'toast ' + typeClass;
+  el.id = id;
+  el.innerHTML = '<span class="toast-icon">' + icon + '</span>' +
+    '<div class="toast-body">' +
+      '<div class="toast-title">' + sanitize(title) + '</div>' +
+      '<div class="toast-msg">' + sanitize(message) + '</div>' +
+    '</div>' +
+    '<button class="toast-dismiss" onclick="dismissToast(\'' + id + '\')" title="Fechar">×</button>';
+
+  if (page) {
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', function(e) {
+      if (e.target.classList.contains('toast-dismiss')) return;
+      dismissToast(id);
+      navigateTo(page);
+    });
+  }
+
+  container.appendChild(el);
+  setTimeout(function() { dismissToast(id); }, 6000);
+}
+
+window.dismissToast = function(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('toast-out');
+  setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 280);
+};
+
+// ============================================================
 //  INITIALIZATION
 // ============================================================
 function renderAll() {
@@ -1594,6 +1942,7 @@ function renderAll() {
   updateFbCharts();
   renderLeads();
   renderOverviewLeads();
+  updateAlerts();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -1610,6 +1959,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
 
+      loadAlertReadState();
       updateGreeting();
       updateUserBadges();
       setDefaultFinDate();
