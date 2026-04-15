@@ -793,25 +793,44 @@ O dashboard monitora seus dados automaticamente e avisa Lucas e Rodrigo sobre o 
 - Clicar em qualquer alerta navega direto para a página correspondente e marca como lido
 
 **Badges no menu lateral:**
-- **Kanban** — mostra quantas tarefas estão atrasadas ou vencem hoje
-- **Leads** — mostra quantos leads aguardam contato
+- **Kanban** — mostra quantas tarefas estão atrasadas, vencem hoje ou urgentes paradas
+- **Pipeline** — mostra clientes parados no funil há mais de 14 dias
+- **Metas** — mostra metas com progresso abaixo de 30%
+- **Leads** — mostra leads novos ou sem resposta aguardando contato
 
 **Toasts (notificações temporárias):**
 - Aparecem no canto inferior direito por 6 segundos
-- Acionados automaticamente quando surgem alertas urgentes novos
-- Clique no toast navega direto para a página do problema
+- Dois tipos de toast:
+  - **Alertas automáticos** — disparados quando surgem alertas urgentes novos
+  - **Feedback de ação** — confirmam ações realizadas (mover tarefa, criar, editar, deletar, atualizar lead, etc.)
+- Clique no toast de alerta navega direto para a página do problema
 
 ### Alertas gerados automaticamente
 
 | Ícone | Alerta | Quando aparece | Prioridade |
 |-------|--------|---------------|-----------|
-| ⏰ | **Tarefa Atrasada** | Tarefa com deadline passado e não concluída | 🔴 Urgente |
-| 📅 | **Vence Hoje** | Tarefa com deadline hoje e não concluída | 🟡 Aviso |
-| 👥 | **Leads Aguardando** | Leads com status novo/pendente sem contato | 🟡 Aviso |
-| 🎯 | **Meta Atrasada** | Meta com deadline passado e não atingida | 🔴 Urgente |
-| 🎯 | **Meta Se Aproximando** | Meta vence em ≤ 7 dias e não atingida | 🟡 Aviso |
+| ⏰ | **Tarefa Atrasada** | Tarefa com prazo passado, não concluída | 🔴 Urgente |
+| 📅 | **Vence Hoje** | Tarefa com prazo hoje, não concluída | 🟡 Aviso |
+| 🚨 | **Urgente no Backlog** | Tarefas urgentes nunca iniciadas | 🔴 Urgente |
+| 📌 | **Alta Prioridade Parada** | Tarefas de alta prioridade no Backlog há 7+ dias | 🟡 Aviso |
+| 👥 | **Leads Aguardando** | Leads com status "novo" sem primeiro contato | 🟡 Aviso |
+| 📞 | **Leads Sem Resposta** | Leads que tentaram contato mas não responderam | 🔵 Info |
+| 🤝 | **Leads em Negociação** | Leads na fase de negociação (lembrete positivo) | 🟢 Sucesso |
 | 💸 | **Saldo Negativo** | Despesas > Receitas no mês atual | 🔴 Urgente |
-| 📊 | **Pipeline Parado** | Cliente sem avançar de estágio há mais de 14 dias | 🔵 Info |
+| 📊 | **Cliente Parado** | Cliente sem avançar de estágio há mais de 14 dias | 🔵 Info |
+| 🏆 | **Meta com Progresso Baixo** | Meta abaixo de 30% do target | 🟡 Aviso |
+| 🎯 | **Meta Concluída** | Meta atingiu 100% | 🟢 Sucesso |
+
+### Toasts de feedback por ação
+
+| Ação | Toast exibido |
+|------|--------------|
+| Criar tarefa | "Tarefa Criada — [título] adicionada ao Kanban" |
+| Editar tarefa | "Tarefa Atualizada — [título] foi salva" |
+| Mover tarefa (drag) | "Tarefa Movida — [título] → [Coluna]" (verde se Concluído) |
+| Excluir qualquer item | "[Tipo] Excluída — removida com sucesso" |
+| Atualizar lead | "Lead Atualizado — [nome] → [novo status]" |
+| Meta atingida 100% | "Meta Concluída! — [título] atingiu 100%" |
 
 ### Marcar como lido
 
@@ -821,10 +840,10 @@ O dashboard monitora seus dados automaticamente e avisa Lucas e Rodrigo sobre o 
 
 ### Dica de uso
 
-> Use os badges do sidebar como "check rápido": se Kanban ou Leads mostrarem um número, é sinal de que há algo que precisa de atenção antes de abrir qualquer outra seção.
+> Use os badges do sidebar como "check rápido": se Kanban, Pipeline, Metas ou Leads mostrarem um número, há algo que precisa de atenção. Toasts de feedback confirmam que cada ação foi processada corretamente.
 
 ---
 
 **Mantido por:** Squad Poseidon
 **Última revisão:** 15 de Abril de 2026
-**Versão:** 2.1 (Sistema de Alertas & Notificações)
+**Versão:** 2.2 (Notificações expandidas — badges Pipeline/Metas, toasts de ação)

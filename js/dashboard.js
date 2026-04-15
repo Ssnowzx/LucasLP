@@ -349,11 +349,19 @@ window.dropTask = function(ev) {
   ev.currentTarget.classList.remove('drag-over');
   var taskId = ev.dataTransfer.getData('taskId');
   var newCol = ev.currentTarget.id.replace('col-', '');
+  var colLabels = { backlog: 'Backlog', doing: 'Em Progresso', review: 'Revisão', done: 'Concluído' };
+  var task = state.tasks.find(t => t.id === taskId);
+  var oldCol = task ? task.col : null;
   state.tasks = state.tasks.map(t => t.id === taskId ? Object.assign({}, t, { col: newCol, updatedAt: isoDate() }) : t);
   saveAll();
   renderTasks();
   updateKPIs();
   updateCharts();
+  updateAlerts();
+  if (task && oldCol !== newCol) {
+    var toastType = newCol === 'done' ? 'success' : 'info';
+    showToast('Tarefa Movida', '"' + task.title + '" → ' + (colLabels[newCol] || newCol), toastType);
+  }
 };
 
 window.handleTaskSubmit = function(e) {
@@ -371,13 +379,21 @@ window.handleTaskSubmit = function(e) {
 
   if (editId) {
     state.tasks = state.tasks.map(t => t.id === editId ? Object.assign({}, t, taskData) : t);
+    saveAll();
+    closeModal('modalTask');
+    renderTasks();
+    updateCharts();
+    updateAlerts();
+    showToast('Tarefa Atualizada', '"' + taskData.title + '" foi salva com sucesso', 'success');
   } else {
     state.tasks.push(Object.assign({ id: uid(), col: document.getElementById('taskColumn').value, createdAt: isoDate() }, taskData));
+    saveAll();
+    closeModal('modalTask');
+    renderTasks();
+    updateCharts();
+    updateAlerts();
+    showToast('Tarefa Criada', '"' + taskData.title + '" adicionada ao Kanban', 'success');
   }
-  saveAll();
-  closeModal('modalTask');
-  renderTasks();
-  updateCharts();
 };
 
 window.editTask = function(id) {
@@ -405,6 +421,8 @@ window.requestDelete = function(type, id, label) {
 };
 
 window.confirmDelete = function() {
+  var typeLabels = { task: 'Tarefa', finance: 'Transação', client: 'Cliente', goal: 'Meta', fbcampaign: 'Campanha' };
+  var label = typeLabels[pendingDeleteType] || 'Item';
   if (pendingDeleteType === 'task') {
     window.db.deleteTask(pendingDeleteId);
     state.tasks = state.tasks.filter(t => t.id !== pendingDeleteId);
@@ -423,6 +441,7 @@ window.confirmDelete = function() {
   }
   closeModal('modalConfirm');
   renderAll();
+  showToast(label + ' Excluída', label + ' removida com sucesso', 'info');
   pendingDeleteType = null;
   pendingDeleteId = null;
 };
@@ -805,10 +824,16 @@ window.handleGoalSubmit = function(e) {
 window.updateGoalProgress = function(id, delta) {
   var goal = state.goals.find(g => g.id === id);
   if (!goal) return;
+  var wasDone = goal.target > 0 && goal.current >= goal.target;
   goal.current = Math.max(0, goal.current + delta);
   goal.updatedAt = isoDate();
+  var isNowDone = goal.target > 0 && goal.current >= goal.target;
   saveAll();
   renderGoals();
+  updateAlerts();
+  if (!wasDone && isNowDone) {
+    showToast('Meta Concluída!', '"' + goal.title + '" atingiu 100% — parabéns!', 'success');
+  }
 };
 
 function renderGoals() {
@@ -1349,6 +1374,10 @@ window.changeLeadStatus = function(id, newStatus) {
       renderLeads();
       updateLeadAlerts();
       renderOverviewLeads();
+      updateAlerts();
+      var statusLabels = { novo: 'Novo', contatado: 'Contatado', agendado: 'Agendado', em_negociacao: 'Em Negociação', fechado: 'Fechado', perdido: 'Perdido', sem_resposta: 'Sem Resposta' };
+      var toastType = newStatus === 'fechado' ? 'success' : newStatus === 'perdido' ? 'info' : 'info';
+      showToast('Lead Atualizado', (lead ? '"' + lead.name + '"' : 'Lead') + ' → ' + (statusLabels[newStatus] || newStatus), toastType);
     }
   });
 };
@@ -1645,8 +1674,11 @@ function generateAlerts() {
   var alerts = [];
   var now = new Date();
   var todayStr = now.toISOString().split('T')[0];
+  var ownerLabel = function(o) { return o === 'rodrigo' ? 'Rodrigo' : 'Lucas'; };
 
-  // 1. Tarefas atrasadas
+  // ── KANBAN ──────────────────────────────────────────────────
+
+  // 1. Tarefas atrasadas (prazo passado, não concluídas)
   state.tasks.forEach(function(task) {
     if (task.due && task.col !== 'done') {
       var deadline = new Date(task.due + 'T23:59:59');
@@ -1656,7 +1688,7 @@ function generateAlerts() {
           type: 'urgent',
           icon: '⏰',
           title: 'Tarefa Atrasada',
-          message: '"' + task.title + '" venceu em ' + formatDate(task.due),
+          message: '"' + task.title + '" venceu em ' + formatDate(task.due) + ' — ' + ownerLabel(task.owner),
           page: 'kanban',
           pageLabel: 'Kanban'
         });
@@ -1672,66 +1704,96 @@ function generateAlerts() {
         type: 'warning',
         icon: '📅',
         title: 'Vence Hoje',
-        message: '"' + task.title + '" deve ser concluída hoje',
+        message: '"' + task.title + '" deve ser concluída hoje — ' + ownerLabel(task.owner),
         page: 'kanban',
         pageLabel: 'Kanban'
       });
     }
   });
 
-  // 3. Leads pendentes aguardando contato
-  var pendingLeads = [];
-  if (state.leads && state.leads.length > 0) {
-    pendingLeads = state.leads.filter(function(l) {
-      var s = (l.status || '').toLowerCase();
-      return s === 'novo' || s === 'pendente' || s === 'aguardando';
+  // 3. Tarefas urgentes paradas no Backlog (nunca foram iniciadas)
+  var urgentBacklog = state.tasks.filter(function(t) {
+    return t.priority === 'urgent' && t.col === 'backlog';
+  });
+  if (urgentBacklog.length > 0) {
+    alerts.push({
+      id: 'kanban_urgent_backlog',
+      type: 'urgent',
+      icon: '🚨',
+      title: urgentBacklog.length === 1 ? 'Urgente no Backlog' : urgentBacklog.length + ' Urgentes no Backlog',
+      message: urgentBacklog.map(function(t) { return '"' + t.title + '"'; }).join(', ') + ' — não iniciada(s)!',
+      page: 'kanban',
+      pageLabel: 'Kanban'
     });
   }
-  if (pendingLeads.length > 0) {
+
+  // 4. Tarefas de alta prioridade em backlog há mais de 7 dias
+  state.tasks.forEach(function(task) {
+    if (task.priority === 'high' && task.col === 'backlog' && task.createdAt) {
+      var created = new Date(task.createdAt);
+      var daysInBacklog = Math.ceil((now - created) / (1000 * 60 * 60 * 24));
+      if (daysInBacklog >= 7) {
+        alerts.push({
+          id: 'kanban_high_stale_' + task.id,
+          type: 'warning',
+          icon: '📌',
+          title: 'Alta Prioridade Parada',
+          message: '"' + task.title + '" está no Backlog há ' + daysInBacklog + ' dias — ' + ownerLabel(task.owner),
+          page: 'kanban',
+          pageLabel: 'Kanban'
+        });
+      }
+    }
+  });
+
+  // ── LEADS ────────────────────────────────────────────────────
+
+  // 5. Leads novos sem primeiro contato
+  var leads = state.leads || [];
+  var novosLeads = leads.filter(function(l) { return (l.status || 'novo') === 'novo'; });
+  if (novosLeads.length > 0) {
     alerts.push({
-      id: 'leads_pending',
+      id: 'leads_novos',
       type: 'warning',
       icon: '👥',
-      title: 'Leads Aguardando',
-      message: pendingLeads.length + ' lead(s) aguardando primeiro contato. Não perca oportunidades!',
+      title: novosLeads.length === 1 ? 'Lead Novo Aguardando' : novosLeads.length + ' Leads Novos Aguardando',
+      message: novosLeads.length + ' lead(s) ainda sem primeiro contato. Não perca oportunidades!',
       page: 'leads',
       pageLabel: 'Leads'
     });
   }
 
-  // 4. Metas próximas do prazo (≤ 7 dias) ou atrasadas
-  state.goals.forEach(function(goal) {
-    if (goal.deadline) {
-      var gDeadline = new Date(goal.deadline + 'T23:59:59');
-      var diffDays = Math.ceil((gDeadline - now) / (1000 * 60 * 60 * 24));
-      var progress = (goal.target && goal.target > 0) ? ((goal.current || 0) / goal.target) * 100 : 0;
-      if (progress < 100) {
-        if (diffDays < 0) {
-          alerts.push({
-            id: 'goal_overdue_' + goal.id,
-            type: 'urgent',
-            icon: '🎯',
-            title: 'Meta Atrasada',
-            message: '"' + goal.title + '" venceu e está em ' + Math.round(progress) + '% — precisa de atenção!',
-            page: 'goals',
-            pageLabel: 'Metas'
-          });
-        } else if (diffDays <= 7) {
-          alerts.push({
-            id: 'goal_deadline_' + goal.id,
-            type: diffDays <= 2 ? 'urgent' : 'warning',
-            icon: '🎯',
-            title: 'Meta Se Aproximando',
-            message: '"' + goal.title + '" vence em ' + diffDays + ' dia(s) — ' + Math.round(progress) + '% concluída',
-            page: 'goals',
-            pageLabel: 'Metas'
-          });
-        }
-      }
-    }
-  });
+  // 6. Leads sem resposta (tentou contato mas não responderam)
+  var semResposta = leads.filter(function(l) { return l.status === 'sem_resposta'; });
+  if (semResposta.length > 0) {
+    alerts.push({
+      id: 'leads_sem_resposta',
+      type: 'info',
+      icon: '📞',
+      title: 'Leads Sem Resposta',
+      message: semResposta.length + ' lead(s) sem resposta. Tente um novo contato!',
+      page: 'leads',
+      pageLabel: 'Leads'
+    });
+  }
 
-  // 5. Saldo negativo no mês
+  // 7. Leads em negociação (lembrete positivo — acompanhe para fechar)
+  var negociando = leads.filter(function(l) { return l.status === 'em_negociacao'; });
+  if (negociando.length > 0) {
+    alerts.push({
+      id: 'leads_em_negociacao',
+      type: 'success',
+      icon: '🤝',
+      title: 'Leads em Negociação',
+      message: negociando.length + ' lead(s) em negociação. Acompanhe para fechar!',
+      page: 'leads',
+      pageLabel: 'Leads'
+    });
+  }
+
+  // ── FINANCEIRO ───────────────────────────────────────────────
+
+  // 8. Saldo negativo no mês atual
   var cm = now.getMonth();
   var cy = now.getFullYear();
   var mFin = state.finances.filter(function(f) {
@@ -1752,10 +1814,12 @@ function generateAlerts() {
     });
   }
 
-  // 6. Pipeline: clientes há muito tempo sem avançar de stage
-  var stageOrder = ['lead', 'contact', 'proposal', 'negotiation', 'active'];
+  // ── PIPELINE ─────────────────────────────────────────────────
+
+  // 9. Clientes parados no funil há mais de 14 dias (não avançaram de estágio)
+  var stageLabels = { lead: 'Lead', onboarding: 'Onboarding', paused: 'Pausado' };
   state.clients.forEach(function(client) {
-    if (client.stage && client.stage !== 'active' && client.stage !== 'lost' && client.updatedAt) {
+    if (client.stage && client.stage !== 'active' && client.stage !== 'churned' && client.updatedAt) {
       var updatedAt = new Date(client.updatedAt);
       var daysSince = Math.ceil((now - updatedAt) / (1000 * 60 * 60 * 24));
       if (daysSince >= 14) {
@@ -1763,14 +1827,48 @@ function generateAlerts() {
           id: 'pipeline_stale_' + client.id,
           type: 'info',
           icon: '📊',
-          title: 'Pipeline Parado',
-          message: '"' + client.name + '" está em ' + (client.stage || 'estágio') + ' há ' + daysSince + ' dias sem atualização',
+          title: 'Cliente Parado no Pipeline',
+          message: '"' + client.name + '" em ' + (stageLabels[client.stage] || client.stage) + ' há ' + daysSince + ' dias sem atualização',
           page: 'pipeline',
           pageLabel: 'Pipeline'
         });
       }
     }
   });
+
+  // ── METAS ────────────────────────────────────────────────────
+
+  // 10. Metas com progresso crítico (< 30% e target > 0)
+  var goalsLow = (state.goals || []).filter(function(g) {
+    return g.target > 0 && (g.current / g.target) < 0.30;
+  });
+  if (goalsLow.length > 0) {
+    alerts.push({
+      id: 'goals_low_progress',
+      type: 'warning',
+      icon: '🏆',
+      title: goalsLow.length === 1 ? 'Meta com Progresso Baixo' : goalsLow.length + ' Metas com Progresso Baixo',
+      message: goalsLow.map(function(g) { return '"' + g.title + '"'; }).join(', ') + ' — abaixo de 30% da meta',
+      page: 'goals',
+      pageLabel: 'Metas'
+    });
+  }
+
+  // 11. Metas concluídas (100%) — destaque positivo
+  var goalsDone = (state.goals || []).filter(function(g) {
+    return g.target > 0 && g.current >= g.target;
+  });
+  if (goalsDone.length > 0) {
+    alerts.push({
+      id: 'goals_completed_' + goalsDone.length,
+      type: 'success',
+      icon: '🎯',
+      title: goalsDone.length === 1 ? 'Meta Concluída!' : goalsDone.length + ' Metas Concluídas!',
+      message: goalsDone.map(function(g) { return '"' + g.title + '"'; }).join(', ') + ' — parabéns!',
+      page: 'goals',
+      pageLabel: 'Metas'
+    });
+  }
 
   return alerts;
 }
@@ -1838,6 +1936,34 @@ function updateSidebarBadges(alerts) {
       badgeLeads.style.display = 'flex';
     } else {
       badgeLeads.style.display = 'none';
+    }
+  }
+
+  // Pipeline: clientes parados
+  var pipelineAlerts = alerts.filter(function(a) {
+    return a.page === 'pipeline' && !_alertReadState[a.id];
+  });
+  var badgePipeline = document.getElementById('badgePipeline');
+  if (badgePipeline) {
+    if (pipelineAlerts.length > 0) {
+      badgePipeline.textContent = pipelineAlerts.length;
+      badgePipeline.style.display = 'flex';
+    } else {
+      badgePipeline.style.display = 'none';
+    }
+  }
+
+  // Metas: progresso crítico
+  var goalsAlerts = alerts.filter(function(a) {
+    return a.page === 'goals' && !_alertReadState[a.id] && a.type === 'warning';
+  });
+  var badgeGoals = document.getElementById('badgeGoals');
+  if (badgeGoals) {
+    if (goalsAlerts.length > 0) {
+      badgeGoals.textContent = goalsAlerts.length;
+      badgeGoals.style.display = 'flex';
+    } else {
+      badgeGoals.style.display = 'none';
     }
   }
 }
