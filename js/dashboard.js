@@ -13,11 +13,19 @@ let state = {
 };
 let currentPage = 'overview';
 let _saving = false;
+let _savePending = false;
 
 function saveAll() {
-  if (_saving) return;
+  if (_saving) {
+    _savePending = true; // salva estado mais recente quando o atual terminar
+    return;
+  }
   _saving = true;
-  window.db.saveAll(state).finally(function() { _saving = false; });
+  _savePending = false;
+  window.db.saveAll(state).finally(function() {
+    _saving = false;
+    if (_savePending) saveAll(); // executa o save pendente com o estado mais atualizado
+  });
 }
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
@@ -1640,15 +1648,15 @@ function generateAlerts() {
 
   // 1. Tarefas atrasadas
   state.tasks.forEach(function(task) {
-    if (task.deadline && task.status !== 'done') {
-      var deadline = new Date(task.deadline + 'T23:59:59');
+    if (task.due && task.col !== 'done') {
+      var deadline = new Date(task.due + 'T23:59:59');
       if (deadline < now) {
         alerts.push({
           id: 'task_overdue_' + task.id,
           type: 'urgent',
           icon: '⏰',
           title: 'Tarefa Atrasada',
-          message: '"' + task.title + '" venceu em ' + formatDate(task.deadline),
+          message: '"' + task.title + '" venceu em ' + formatDate(task.due),
           page: 'kanban',
           pageLabel: 'Kanban'
         });
@@ -1658,7 +1666,7 @@ function generateAlerts() {
 
   // 2. Tarefas que vencem hoje
   state.tasks.forEach(function(task) {
-    if (task.deadline && task.status !== 'done' && task.deadline === todayStr) {
+    if (task.due && task.col !== 'done' && task.due === todayStr) {
       alerts.push({
         id: 'task_today_' + task.id,
         type: 'warning',
