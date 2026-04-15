@@ -77,6 +77,7 @@ window.navigateTo = function(pageName, event) {
   document.getElementById('pageBreadcrumb').textContent = labels[pageName] || pageName;
 
   currentPage = pageName;
+  localStorage.setItem('lastPage', pageName);
 
   // Close mobile menu on navigation
   if (window.innerWidth <= 768) {
@@ -1619,6 +1620,13 @@ document.addEventListener('DOMContentLoaded', function() {
       updateFbConfigStatus();
       loadDashboardLeads();
       renderAll();
+
+      // Restore last visited page
+      var savedPage = localStorage.getItem('lastPage');
+      var validPages = ['overview', 'kanban', 'finance', 'pipeline', 'goals', 'notes', 'fbads', 'leads'];
+      if (savedPage && validPages.includes(savedPage) && savedPage !== 'overview') {
+        navigateTo(savedPage);
+      }
 
       // Restore sidebar state
       if (state.settings.sidebarMinimized) {
