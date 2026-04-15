@@ -428,7 +428,7 @@ window.confirmDelete = function() {
 };
 
 function renderTasks() {
-  var cols = ['backlog', 'progress', 'review', 'done'];
+  var cols = ['backlog', 'doing', 'review', 'done'];
   var priorityFilter = document.getElementById('filterPriority').value;
 
   cols.forEach(function(col) {

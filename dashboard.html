@@ -352,16 +352,16 @@
                                 </div>
                                 <div class="task-list" id="list-backlog"></div>
                             </div>
-                            <div class="kanban-column" id="col-progress" ondrop="dropTask(event)" ondragover="allowDrop(event)">
+                            <div class="kanban-column" id="col-doing" ondrop="dropTask(event)" ondragover="allowDrop(event)">
                                 <div class="column-header">
                                     <div class="column-info">
                                         <span class="column-dot" style="background:var(--sea-foam)"></span>
                                         <span class="column-title">Em Andamento</span>
-                                        <span class="column-count" id="count-progress">0</span>
+                                        <span class="column-count" id="count-doing">0</span>
                                     </div>
-                                    <button class="add-task-btn" onclick="openTaskModal('progress')">+</button>
+                                    <button class="add-task-btn" onclick="openTaskModal('doing')">+</button>
                                 </div>
-                                <div class="task-list" id="list-progress"></div>
+                                <div class="task-list" id="list-doing"></div>
                             </div>
                             <div class="kanban-column" id="col-review" ondrop="dropTask(event)" ondragover="allowDrop(event)">
                                 <div class="column-header">
