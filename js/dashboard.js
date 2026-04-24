@@ -589,6 +589,62 @@ window.handleFinanceSubmit = function(e) {
   updateCharts();
 };
 
+var VOLATILE_CATEGORIES = ['Performance', 'Outros'];
+var EXPENSE_SAFETY_MARGIN = 1.05;
+
+function median(values) {
+  if (!values.length) return 0;
+  var sorted = values.slice().sort(function(a, b) { return a - b; });
+  var mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+}
+
+function calculateNextMonthProjection() {
+  if (!state.finances || !state.finances.length) return null;
+
+  var now = new Date();
+  var currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  var windowStart = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+
+  var historical = state.finances.filter(function(f) {
+    var d = new Date(f.date);
+    return d >= windowStart && d < currentMonthStart;
+  });
+
+  if (!historical.length) return null;
+
+  var monthKeys = [];
+  for (var i = 3; i >= 1; i--) {
+    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    monthKeys.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'));
+  }
+
+  // Mediana por categoria com meses ausentes preenchidos com 0 para refletir recorrência real
+  var buckets = {};
+  historical.forEach(function(f) {
+    var d = new Date(f.date);
+    var monthKey = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    var bucketKey = f.type + '|' + f.cat;
+    if (!buckets[bucketKey]) buckets[bucketKey] = {};
+    buckets[bucketKey][monthKey] = (buckets[bucketKey][monthKey] || 0) + f.val;
+  });
+
+  var incomeEst = 0, expenseEst = 0;
+  Object.keys(buckets).forEach(function(key) {
+    var parts = key.split('|');
+    var type = parts[0];
+    var cat = parts[1];
+    var values = monthKeys.map(function(mk) { return buckets[key][mk] || 0; });
+    var catMedian = median(values);
+    var weight = VOLATILE_CATEGORIES.indexOf(cat) !== -1 ? 0.70 : 1.00;
+    var adjusted = catMedian * weight;
+    if (type === 'income') incomeEst += adjusted;
+    else if (type === 'expense') expenseEst += adjusted;
+  });
+
+  return incomeEst - (expenseEst * EXPENSE_SAFETY_MARGIN);
+}
+
 window.renderFinances = function() {
   var monthFilter = document.getElementById('filterFinMonth').value;
   var typeFilter = document.getElementById('filterFinType').value;
@@ -637,7 +693,15 @@ window.renderFinances = function() {
   document.getElementById('finIncome').textContent = money(income);
   document.getElementById('finExpense').textContent = money(expense);
   document.getElementById('finBalance').textContent = money(income - expense);
-  document.getElementById('finProjection').textContent = money((income - expense) * 1.15);
+  var projection = calculateNextMonthProjection();
+  var projEl = document.getElementById('finProjection');
+  if (projection === null) {
+    projEl.textContent = '—';
+    projEl.title = 'Aguardando pelo menos 1 mês completo de histórico para projetar.';
+  } else {
+    projEl.textContent = money(projection);
+    projEl.title = 'Projeção do próximo mês: mediana dos últimos 3 meses por categoria. Categorias voláteis (Performance, Outros) com peso 0,70. Saídas com colchão de +5%.';
+  }
 };
 
 function populateFinanceFilters() {
