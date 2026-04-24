@@ -170,14 +170,14 @@ Filtrar por Prioridade:   Urgente | Alta | Normal | Baixa
 **O que é?**
 Controle completo de entradas e saídas com categorização automática.
 
-#### 3 Cards de Resumo
+#### 4 Cards de Resumo
 
 ```
-┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-│ Total Entradas  │  │ Total Saídas    │  │ Saldo Atual     │
-│ R$ 45.000       │  │ R$ 15.000       │  │ R$ 30.000       │
-│ (Mês Atual)     │  │ (Mês Atual)     │  │ (Acumulado)     │
-└─────────────────┘  └─────────────────┘  └─────────────────┘
+┌───────────────┐  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐
+│ Entradas      │  │ Saídas        │  │ Saldo         │  │ Projeção      │
+│ R$ 45.000     │  │ R$ 15.000     │  │ R$ 30.000     │  │ R$ 28.750     │
+│ (Filtrado)    │  │ (Filtrado)    │  │ (Entradas-Saí)│  │ (Próx. mês)   │
+└───────────────┘  └───────────────┘  └───────────────┘  └───────────────┘
 ```
 
 #### Como Adicionar uma Transação
@@ -238,11 +238,35 @@ Ordenar por:
 #### Cálculos Automáticos
 
 ```
-Total Entradas  = Soma de todas as entradas do mês
-Total Saídas    = Soma de todas as saídas do mês
-Saldo Atual     = Entradas - Saídas (acumulado)
+Entradas        = Soma das entradas (respeitando filtros aplicados)
+Saídas          = Soma das saídas (respeitando filtros aplicados)
+Saldo           = Entradas - Saídas
 Margem (%)      = (Saldo / Entradas) × 100
 ```
+
+#### Projeção do Próximo Mês
+
+A projeção usa **mediana histórica ponderada** dos últimos 3 meses fechados, por categoria — não um multiplicador fixo. Mediana absorve outliers (um mês atípico não distorce o resultado) e os pesos por categoria ajustam para volatilidade real do negócio.
+
+**Fórmula:**
+
+```
+Projeção = Σ (Mediana₃ₘ(entrada_c) × wc)  -  Σ (Mediana₃ₘ(saída_c) × wc) × 1,05
+```
+
+**Pesos por categoria (`wc`):**
+
+| Categoria | Peso | Motivo |
+|-----------|------|--------|
+| Performance | 0,70 | Bônus variável, imprevisível |
+| Outros | 0,70 | Catch-all, volátil |
+| Mensalidade, Ads, Ferramentas, Operacional, Impostos, Pró-labore, Marketing | 1,00 | Recorrentes/previsíveis |
+
+**Colchão de risco:** saídas estimadas são multiplicadas por **1,05** (+5%) para viés conservador no planejamento de caixa.
+
+**Tratamento de meses sem a categoria:** entram como 0 na mediana — assim uma categoria não-recorrente (ex.: Bônus que só apareceu 1x em 3 meses) não infla a projeção.
+
+**Sem histórico:** se não houver pelo menos 1 mês completo anterior, o card mostra `—` em vez de um número sem base.
 
 #### Dicas Financeiras
 
@@ -559,7 +583,7 @@ ROAS (x) = Receita / Gasto
 1. Financeiro → Fechamento
    - Todas transações registradas?
    - Recebimentos em dia?
-   - Projeção próximo mês (burn rate)
+   - Projeção próximo mês (mediana 3m ponderada + colchão +5% nas saídas)
 
 2. Metas → Avaliação
    - Atingiu metas de março?
