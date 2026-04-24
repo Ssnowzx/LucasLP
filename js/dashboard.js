@@ -1133,7 +1133,7 @@ function initFbCharts() {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } } },
       scales: {
-        y: { grid: { color: 'rgba(42,59,66,0.5)' }, ticks: { callback: v => 'R$' + (v/1000) + 'k' } },
+        y: { grid: { color: 'rgba(36,36,40,0.6)' }, ticks: { callback: v => 'R$' + (v/1000) + 'k' } },
         x: { grid: { display: false } }
       }
     }
@@ -1146,7 +1146,7 @@ function initFbCharts() {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } } },
       scales: {
-        y: { grid: { color: 'rgba(42,59,66,0.5)' } },
+        y: { grid: { color: 'rgba(36,36,40,0.6)' } },
         x: { grid: { display: false } }
       }
     }
@@ -1165,8 +1165,8 @@ function updateFbCharts() {
 
   chartFbSpend.data.labels = names.length > 0 ? names : ['Sem dados'];
   chartFbSpend.data.datasets = [
-    { label: 'Orcamento', data: budgets.length > 0 ? budgets : [0], backgroundColor: 'rgba(125,211,252,0.4)', borderColor: '#7DD3FC', borderWidth: 1, borderRadius: 6 },
-    { label: 'Gasto', data: spents.length > 0 ? spents : [0], backgroundColor: 'rgba(252,165,165,0.4)', borderColor: '#FCA5A5', borderWidth: 1, borderRadius: 6 }
+    { label: 'Orcamento', data: budgets.length > 0 ? budgets : [0], backgroundColor: 'rgba(167,139,250,0.4)', borderColor: '#A78BFA', borderWidth: 1, borderRadius: 6 },
+    { label: 'Gasto', data: spents.length > 0 ? spents : [0], backgroundColor: 'rgba(248,113,113,0.4)', borderColor: '#F87171', borderWidth: 1, borderRadius: 6 }
   ];
   chartFbSpend.update();
 
@@ -1175,8 +1175,8 @@ function updateFbCharts() {
 
   chartFbROAS.data.labels = names.length > 0 ? names : ['Sem dados'];
   chartFbROAS.data.datasets = [
-    { label: 'CTR (%)', data: ctrs.length > 0 ? ctrs : [0], borderColor: '#2DD4BF', backgroundColor: 'rgba(45,212,191,0.1)', tension: 0.3, fill: false, yAxisID: 'y' },
-    { label: 'ROAS (x)', data: roasVals.length > 0 ? roasVals : [0], borderColor: '#FCD34D', backgroundColor: 'rgba(252,211,77,0.1)', tension: 0.3, fill: false, yAxisID: 'y1' }
+    { label: 'CTR (%)', data: ctrs.length > 0 ? ctrs : [0], borderColor: '#10B981', backgroundColor: 'rgba(16,185,129,0.1)', tension: 0.3, fill: false, yAxisID: 'y' },
+    { label: 'ROAS (x)', data: roasVals.length > 0 ? roasVals : [0], borderColor: '#F59E0B', backgroundColor: 'rgba(245,158,11,0.1)', tension: 0.3, fill: false, yAxisID: 'y1' }
   ];
   chartFbROAS.options.scales.y1 = { position: 'right', grid: { display: false }, ticks: { callback: v => v + 'x' } };
   chartFbROAS.update();
@@ -1192,8 +1192,8 @@ var chartTasks = null;
 function initCharts() {
   if (!document.getElementById('chartRevenue')) return;
 
-  Chart.defaults.color = '#94A3B8';
-  Chart.defaults.borderColor = '#2A3B42';
+  Chart.defaults.color = '#A1A1AA';
+  Chart.defaults.borderColor = '#242428';
   Chart.defaults.font.family = 'DM Sans';
 
   var ctxRev = document.getElementById('chartRevenue').getContext('2d');
@@ -1204,7 +1204,7 @@ function initCharts() {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } } },
       scales: {
-        y: { grid: { color: 'rgba(42,59,66,0.5)' }, ticks: { callback: v => 'R$' + (v/1000) + 'k' } },
+        y: { grid: { color: 'rgba(36,36,40,0.6)' }, ticks: { callback: v => 'R$' + (v/1000) + 'k' } },
         x: { grid: { display: false } }
       }
     }
@@ -1229,7 +1229,7 @@ function initCharts() {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
-        y: { grid: { color: 'rgba(42,59,66,0.5)' }, beginAtZero: true, ticks: { stepSize: 1 } },
+        y: { grid: { color: 'rgba(36,36,40,0.6)' }, beginAtZero: true, ticks: { stepSize: 1 } },
         x: { grid: { display: false } }
       }
     }
@@ -1260,8 +1260,8 @@ function updateRevenueChart() {
 
   chartRevenue.data.labels = months.map(m => m.label);
   chartRevenue.data.datasets = [
-    { label: 'Receita', data: incomeData, borderColor: '#2DD4BF', backgroundColor: 'rgba(45,212,191,0.1)', tension: 0.3, fill: true },
-    { label: 'Despesa', data: expenseData, borderColor: '#FCA5A5', backgroundColor: 'rgba(252,165,165,0.1)', tension: 0.3, fill: true }
+    { label: 'Receita', data: incomeData, borderColor: '#10B981', backgroundColor: 'rgba(16,185,129,0.12)', tension: 0.3, fill: true },
+    { label: 'Despesa', data: expenseData, borderColor: '#F87171', backgroundColor: 'rgba(248,113,113,0.10)', tension: 0.3, fill: true }
   ];
   chartRevenue.update();
 }
@@ -1274,12 +1274,12 @@ function updateExpenseChart() {
 
   var labels = Object.keys(catTotals);
   var data = labels.map(l => catTotals[l]);
-  var colors = ['#7DD3FC', '#2DD4BF', '#FCA5A5', '#FCD34D', '#A78BFA', '#F472B6', '#34D399', '#FB923C', '#94A3B8'];
+  var colors = ['#A78BFA', '#10B981', '#F59E0B', '#F87171', '#60A5FA', '#F472B6', '#34D399', '#FB923C', '#A1A1AA'];
 
   chartExpenses.data.labels = labels.length > 0 ? labels : ['Sem dados'];
   chartExpenses.data.datasets = [{
     data: data.length > 0 ? data : [1],
-    backgroundColor: data.length > 0 ? colors.slice(0, labels.length) : ['#2A3B42'],
+    backgroundColor: data.length > 0 ? colors.slice(0, labels.length) : ['#242428'],
     borderWidth: 0
   }];
   chartExpenses.update();
@@ -1300,7 +1300,7 @@ function updateTasksChart() {
   chartTasks.data.datasets = [{
     label: 'Concluidas',
     data: weekData,
-    backgroundColor: '#7DD3FC',
+    backgroundColor: '#A78BFA',
     borderRadius: 6
   }];
   chartTasks.update();
